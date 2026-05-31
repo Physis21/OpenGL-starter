@@ -10,3 +10,10 @@ In this project:
 ## Documentation for OpenGL
 
 Great site for OpenGL documentation: [docs.gl](https://docs.gl/gl3/glBufferData)
+
+## General vocabulary
+
+**Index Buffer**
+
+Store vertex positions in order to remove duplicate memory of vertices when rendering multiple triangles
+with shared vertices.

@@ -1,12 +1,17 @@
 #include <iostream>
 #include "glad.h"
 #include <GLFW/glfw3.h>
-#include <array>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <sstream>
+#include "Renderer.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexBufferLayout.hpp"
+#include "VertexArray.hpp"
 
-#define LOG(x) std::cout << x << std::endl;
 
 struct ShaderProgramSource {
     std::string VertexSource;
@@ -90,6 +95,10 @@ int main(int argc, char**argv){
         return -1;
     }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     window = glfwCreateWindow(640, 480, "openGL-starter window!", NULL, NULL);
     if (!window) {
         std::cout << "Couldn't open Window" << std::endl;
@@ -98,78 +107,108 @@ int main(int argc, char**argv){
     }
     glfwMakeContextCurrent(window); // Create the OpenGL context
 
+    glfwSwapInterval(10); // Limit framerate
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Couldn't open OpenGL" << std::endl;
         glfwTerminate();
         return -1;
     }
 
-    std::array<float, 6> positions = {
-        -0.5, -0.5,
-        0.0, 0.5,
-        0.5, -0.5,
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
+
+    /* Square with 2 triangles */
+    float positions[] = {
+        -0.5, -0.5, // 0
+         0.5, -0.5, // 1
+         0.5,  0.5, // 2
+        -0.5,  0.5, // 3
     };
 
+    /* indices HAVE to be unsigned */
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0,
+    };
     glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-    /* ID of generated buffer. After glGenBuffers, it will have the ID of the generated Buffer */
-    unsigned int buffer; 
-    glGenBuffers(1, &buffer);
-    LOG("Current buffer:"); LOG(buffer);
-    /* Select a buffer (binding)
-    GL_ARRAY_BUFFER tells the GPU this is just a buffer of memory */
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    /* Buffer size should be in bytes, GL_STATIC_DRAW is a hint to the GL implementation */
-    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
-    /* 0 is the index of the generic vertex attribute to be enabled or disabled */
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (const void*) 0);
+    /* Create a scope to call destructors of objects before the glfw termination deletes the OpenGL context */
+    {
+
+        unsigned int vao;
+
+        VertexArray va;
+        VertexBuffer vb(positions, 8 * sizeof(float));
+
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
+
+        /* Heap-allocating buffers is pretty common */
+
+        
+        std::unique_ptr<IndexBuffer> ib = std::make_unique<IndexBuffer>(indices, 6);
 
 
-    std::string vertexShader = 
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) in vec4 position;\n"
-        "\n"
-        "void main() {\n"
-        "   gl_Position = position;\n"
-        "}\n";
+        ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+        std::cout <<"Vertex source:\n" << source.VertexSource << std::endl;
+        std::cout <<"Fragment source:\n" << source.FragmentSource << std::endl;
 
-    std::string fragmentShader = 
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) out vec4 color;\n"
-        "\n"
-        "void main() {\n"
-        "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
+        unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+        MyGLCall(glUseProgram(shader));
 
-    ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
-    std::cout <<"Vertex source:\n" << source.VertexSource << std::endl;
-    std::cout <<"Fragment source:\n" << source.FragmentSource << std::endl;
 
-    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-    glUseProgram(shader);
+        MyGLCall(int u_Color_location = glGetUniformLocation(shader, "u_Color"));
+        ASSERT(u_Color_location != -1); // If uniform not found
 
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
+        /* Unbind buffers and program */
+        // TODO: stopped here at Cherno video
+        MyGLCall(glBindVertexArray(0));
+        MyGLCall(glUseProgram(0));
+        MyGLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        MyGLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        float rChannel = 0.0f; // Red color channel
+        float increment = 0.05f;
 
-        /*
-         * GL_TRIANGLES tells GL to group the vertices by 3
-         * 0 means you start at the first vertex
-         * means 3 that we have 3 indices to render 
-        */
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents();
 
-        glfwSwapBuffers(window);
+            /* Render here */
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            /*
+             * GL_TRIANGLES tells GL to group the vertices by 3
+             * 0 means you start at the first vertex
+             * 3 means that we have 3 indices to render 
+            */
+            // glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            /* Rebind buffer */
+            MyGLCall(glUseProgram(shader));
+            MyGLCall(glUniform4f(u_Color_location, rChannel, 0.3f, 0.8f, 1.0f));
+
+            va.Bind();
+            ib->Bind();
+            // MyGLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+            // MyGLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+
+            MyGLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+            if (rChannel > 1.0f) {
+                increment = -0.05f;
+            } else if (rChannel < 0.0f){
+                increment = 0.05f;
+            }
+
+            rChannel += increment;
+
+            glfwSwapBuffers(window);
+        }
+
+        glDeleteProgram(shader);
     }
-
-    glDeleteProgram(shader);
-
     glfwTerminate();
     return 0;
 }
