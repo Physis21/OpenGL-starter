@@ -57,11 +57,11 @@ static unsigned int CompileShader(unsigned int shaderType, const std::string& so
         // alloca allows for creation of arbitrary-size string on stack!
         char* message = (char*) alloca(length * sizeof(char));
         glGetShaderInfoLog(id, length, &length, message);
-        std::cout 
+        std::cerr
             << "Failed to compile "
             << (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
             << " shader!\n";
-        std::cout << message << std::endl;
+        std::cerr << message << std::endl;
         glDeleteShader(id);
         return 0;
     }
@@ -101,7 +101,7 @@ int main(int argc, char**argv){
 
     window = glfwCreateWindow(640, 480, "openGL-starter window!", NULL, NULL);
     if (!window) {
-        std::cout << "Couldn't open Window" << std::endl;
+        std::cerr << "Couldn't open Window" << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -110,7 +110,7 @@ int main(int argc, char**argv){
     glfwSwapInterval(10); // Limit framerate
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Couldn't open OpenGL" << std::endl;
+        std::cerr << "Couldn't open OpenGL" << std::endl;
         glfwTerminate();
         return -1;
     }
