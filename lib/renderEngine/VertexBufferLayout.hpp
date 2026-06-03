@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer.hpp"
+#include "GLErrorManager.hpp"
 #include "glad.h"
 #include <vector>
 
@@ -16,6 +16,8 @@ struct VertexBufferElement {
     static unsigned int GetSizeOfType(const unsigned int& type);
 };
 
+/* Layout of the vertex buffer.
+ * Stores a vector of VertexBufferElements, and the stride. */
 class VertexBufferLayout {
 
 private:

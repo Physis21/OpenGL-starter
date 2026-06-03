@@ -1,14 +1,10 @@
 #include "Renderer.hpp"
 
-void MyGLClearError() {
-    while (glGetError() != GL_NO_ERROR);
-}
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
+    shader.Bind();
+    va.Bind();
+    ib.Bind();
 
-bool MyGLLogCall(const char* functionName, const char* file, int line) {
-    while (GLenum error = glGetError()) {
-        std::cerr << "[OpenGL Error] (" << error << ") " << functionName
-            << " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-} 
+    // My use unsigned short instead of unsigned int for performance reasons, but not considered here.
+    GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+}

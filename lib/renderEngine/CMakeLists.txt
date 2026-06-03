@@ -2,92 +2,129 @@
 cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 
-# Renderer library
 
-add_library(renderer)
-
-target_sources(renderer
-  PRIVATE Renderer.cpp
+# GL Error Manager library
+add_library(GLErrorManager)
+target_sources(GLErrorManager
+  PRIVATE GLErrorManager.cpp
   PUBLIC
     FILE_SET HEADERS
-    FILES Renderer.hpp
+    FILES GLErrorManager.hpp
 )
-
-target_link_libraries(renderer
-  PUBLIC
+target_link_libraries(GLErrorManager
+  PRIVATE
     glad
     OpenGL::GL
 )
 
 # VertexBuffer class
-
-add_library(vertexBuffer)
-
-target_sources(vertexBuffer
+add_library(VertexBuffer)
+target_sources(VertexBuffer
   PRIVATE VertexBuffer.cpp
   PUBLIC
     FILE_SET HEADERS
     FILES VertexBuffer.hpp
 )
-
-target_link_libraries(vertexBuffer
+target_link_libraries(VertexBuffer
   PRIVATE
-    renderer
+    GLErrorManager 
     glad
     OpenGL::GL
 )
 
 # IndexBuffer class
-
-add_library(indexBuffer)
-
-target_sources(indexBuffer
+add_library(IndexBuffer)
+target_sources(IndexBuffer
   PRIVATE IndexBuffer.cpp
   PUBLIC
     FILE_SET HEADERS
     FILES IndexBuffer.hpp
 )
-
-target_link_libraries(indexBuffer
+target_link_libraries(IndexBuffer
   PRIVATE
-    renderer
+    GLErrorManager 
     glad
     OpenGL::GL
 )
 
-add_library(vertexBufferLayout)
-
-target_sources(vertexBufferLayout
+# VertexBufferLayout class
+add_library(VertexBufferLayout)
+target_sources(VertexBufferLayout
   PRIVATE VertexBufferLayout.cpp
   PUBLIC
     FILE_SET HEADERS
     FILES VertexBufferLayout.hpp
 )
-
-target_link_libraries(vertexBufferLayout
+target_link_libraries(VertexBufferLayout
   PRIVATE
-    renderer
+    GLErrorManager 
     glad
     OpenGL::GL
 )
 
-# VertexArray class, with VertexBufferLayout header-only library
-
-add_library(vertexArray)
-
-target_sources(vertexArray
+# VertexArray class, using VertexBufferLayout class
+add_library(VertexArray)
+target_sources(VertexArray
   PRIVATE VertexArray.cpp
   PUBLIC
     FILE_SET HEADERS
     FILES VertexArray.hpp
 )
-
-target_link_libraries(vertexArray
+target_link_libraries(VertexArray
   PRIVATE
-    renderer
+    GLErrorManager 
     glad
     OpenGL::GL
-    vertexBufferLayout
-    vertexBuffer
+    VertexBufferLayout
+    VertexBuffer
 )
 
+# Shader class
+
+add_library(Shader)
+target_sources(Shader
+  PRIVATE Shader.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES Shader.hpp
+)
+target_link_libraries(Shader
+  PRIVATE
+    GLErrorManager
+    glad
+    OpenGL::GL
+)
+
+# Renderer library
+add_library(Renderer)
+target_sources(Renderer
+  PRIVATE Renderer.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES Renderer.hpp
+)
+target_link_libraries(Renderer
+  PRIVATE
+    glad
+    OpenGL::GL
+    GLErrorManager
+    VertexArray
+    IndexBuffer
+    Shader
+)
+
+# Texture class
+add_library(Texture)
+target_sources(Texture
+  PRIVATE Texture.cpp
+  PUBLIC
+    FILE_SET HEADERS
+    FILES Texture.hpp
+)
+target_link_libraries(Texture
+  PRIVATE
+    glad
+    OpenGL::GL
+    GLErrorManager
+    stb_image
+)

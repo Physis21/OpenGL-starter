@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer.hpp"
+#include "GLErrorManager.hpp"
 #include "glad.h"
 
 class VertexBuffer {

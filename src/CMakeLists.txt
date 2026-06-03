@@ -5,8 +5,12 @@ target_link_libraries(OpenGL-starter
     PRIVATE
         glad
         glfw
-        renderer
-        vertexBuffer
-        indexBuffer
-        vertexArray
+        GLErrorManager 
+        VertexBuffer
+        IndexBuffer
+        VertexArray
+        Shader
+        Renderer
+        Texture
+        stb_image
 )
