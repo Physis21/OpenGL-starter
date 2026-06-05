@@ -1,18 +1,4 @@
-#include <iostream>
-#include "GLErrorManager.hpp"
-#include "glad.h"
-#include <GLFW/glfw3.h>
-#include <string>
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexBufferLayout.hpp"
-#include "VertexArray.hpp"
-#include "Shader.hpp"
-#include "Renderer.hpp"
-#include "Texture.hpp"
-
-
+#include "main.hpp"
 
 int main(int argc, char**argv){
     GLFWwindow* window;
@@ -46,10 +32,10 @@ int main(int argc, char**argv){
     /* Square with 2 triangles 
      * 2 positions, then 2 texture coordinates */
     float positions[] = {
-        -0.5, -0.5, 0.0f, 0.0f, // 0
-         0.5, -0.5, 1.0f, 0.0f, // 1
-         0.5,  0.5, 1.0f, 1.0f, // 2
-        -0.5,  0.5, 0.0f, 1.0f, // 3
+        -200, -240, 0.0f, 0.0f, // 0
+         200, -240, 1.0f, 0.0f, // 1
+         200,  240, 1.0f, 1.0f, // 2
+        -200,  240, 0.0f, 1.0f, // 3
     };
 
     /* indices HAVE to be unsigned */
@@ -57,11 +43,16 @@ int main(int argc, char**argv){
         0, 1, 2,
         2, 3, 0,
     };
-    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-    /* Blending */
-    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    /* Blending 
+     * TODO: move into Renderer init?*/
     GLCall(glEnable(GL_BLEND));
+    /* Default: glBlendFunc(src=GL_ONE, dest=GL_ZERO) 
+     * The source gets overriden by zeros in this case,
+     * and the default glBlendEquation(GL_FUNC_ADD) simply adds src+dest 
+     * NOTE: the alpha value also goes through the equation */
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 
     /* Create a scope to call destructors of objects before the glfw termination deletes the OpenGL context */
@@ -82,10 +73,15 @@ int main(int argc, char**argv){
         
         IndexBuffer ib(indices, 6);
 
+        /* Here we define +-1.2f x bounds, +-1.0f y bounds 
+         * This 0 is indeed the middle of the screen */
+        glm::mat4 proj = glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -1.0f, 1.0f);
+
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
 
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        shader.SetUniformMat4f("u_MVP", proj);
 
         Texture texture("res/textures/TsukihimeLogo.png");
         texture.Bind(0);
@@ -109,6 +105,7 @@ int main(int argc, char**argv){
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // TODO: shader bind already happens in draw call, these 2 lines can probably go away
             shader.Bind();
             shader.SetUniform4f("u_Color", rChannel, 0.3f, 0.8f, 1.0f);
 

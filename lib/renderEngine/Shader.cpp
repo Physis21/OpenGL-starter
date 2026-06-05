@@ -33,6 +33,12 @@ void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
     GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
 }
 
+void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix) {
+    // Provide 1 matrix, glm stores in column order so no need to transpose,
+    // and pass pointer to array using first element
+    GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
     std::ifstream stream(filepath);
     enum class ShaderType {

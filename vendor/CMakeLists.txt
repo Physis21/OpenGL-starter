@@ -14,3 +14,11 @@ target_include_directories(stb_image PUBLIC ${stb_SOURCE_DIR})
 
 # glad library to find OpenGL functions
 add_subdirectory(glad)
+
+# glm, OpenGL maths library
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG 0af55ccecd98d4e5a8d1fad7de25ba429d60e863
+)
+FetchContent_MakeAvailable(glm) # Now glm::glm is available
