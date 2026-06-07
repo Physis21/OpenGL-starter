@@ -21,3 +21,8 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+
+/* Other source files */
+#include "tests/Test.hpp"
+#include "tests/TestClearColor.hpp"
+#include "tests/TestTexture2D.hpp"

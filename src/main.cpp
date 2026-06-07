@@ -45,7 +45,7 @@ int main(int argc, char**argv){
         return -1;
     }
     glfwMakeContextCurrent(window); // Create the OpenGL context
-    glfwSwapInterval(10); // Limit framerate (vsync)
+    glfwSwapInterval(1); // Limit framerate (vsync)
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Couldn't open OpenGL" << std::endl;
@@ -104,85 +104,23 @@ int main(int argc, char**argv){
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
-    // Our state
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    /* Square with 2 triangles 
-     * 2 positions, then 2 texture coordinates */
-    float positions[] = {
-        -100, -140, 0.0f, 0.0f, // 0
-         100, -140, 1.0f, 0.0f, // 1
-         100,  140, 1.0f, 1.0f, // 2
-        -100,  140, 0.0f, 1.0f, // 3
-    };
-
-    /* indices HAVE to be unsigned */
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-    };
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
-    /* Blending 
-     * TODO: move into Renderer init?*/
-    GLCall(glEnable(GL_BLEND));
-    /* Default: glBlendFunc(src=GL_ONE, dest=GL_ZERO) 
-     * The source gets overriden by zeros in this case,
-     * and the default glBlendEquation(GL_FUNC_ADD) simply adds src+dest 
-     * NOTE: the alpha value also goes through the equation */
-    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
 
     /* Create a scope to call destructors of objects before the glfw termination deletes the OpenGL context */
     {
-
-        unsigned int vao;
-
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
-
-        /* Heap-allocating buffers is pretty common */
-
-        
-        IndexBuffer ib(indices, 6);
-
-        /* Here we define +-1.2f x bounds, +-1.0f y bounds 
-         * This 0 is indeed the middle of the screen */
-        glm::mat4 proj = glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -1.0f, 1.0f);
-        /* Move the object to the left, to simulate moving to the camera to the right.
-         * Create an identity matrix and translate it to the left. */
-        glm::vec3 translationA(0, 0, 0);
-        glm::vec3 translationB(200, 0, 0);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-        Shader shader("res/shaders/Basic.shader");
-        shader.Bind();
-
-        shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-
-        Texture texture("res/textures/TsukihimeLogo.png");
-        texture.Bind(0);
-        shader.SetUniform1i("u_Texture", 0); // 0 because we bind the texture to slot 0
-
-        /* Unbind buffers and program */
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-        shader.Unbind();
-
         Renderer renderer;
 
-        float rChannel = 0.0f; // Red color channel
-        float increment = 0.05f;
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
+
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+            renderer.Clear();
+
             // Poll and handle events (inputs, window resize, etc.)
             // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
             // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
@@ -200,35 +138,15 @@ int main(int argc, char**argv){
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-            {
-                static int counter = 0;
-
-                ImGui::Begin("My GUI window!");                          // Create a window called "Hello, world!" and append into it.
-
-                ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Another Window", &show_another_window);
-
-                ImGui::SliderFloat3("translationA", &translationA.x, -200.0f, 200.0f); // Giving .x ref gives pointer to x, y & z
-                ImGui::SliderFloat3("translationB", &translationB.x, -200.0f, 200.0f); // Giving .x ref gives pointer to x, y & z
-                ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
-
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-                ImGui::End();
-            }
-
-            // 3. Show another simple window.
-            if (show_another_window)
-            {
-                ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-                ImGui::Text("Hello from another window!");
-                if (ImGui::Button("Close Me"))
-                    show_another_window = false;
+            if (currentTest) {
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if (currentTest != testMenu && ImGui::Button("<-")) {
+                    delete currentTest; // Call destructor to clean up
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
                 ImGui::End();
             }
 
@@ -237,8 +155,6 @@ int main(int argc, char**argv){
             int display_w, display_h;
             glfwGetFramebufferSize(window, &display_w, &display_h);
             glViewport(0, 0, display_w, display_h);
-            glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-            glClear(GL_COLOR_BUFFER_BIT);
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             // Update and Render additional Platform Windows
@@ -252,34 +168,20 @@ int main(int argc, char**argv){
                 glfwMakeContextCurrent(backup_current_context);
             }
 
-            /* My Rendering here */
-
-            // Here we have redundant Shader bindings. In actual game engines, a caching system would be implemented to prevent this.
-            {
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-                glm::mat4 mvp = proj * model * view; // In OpenGL, projection is proj * model * view due to column major
-                shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
-            }
-            {
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
-                glm::mat4 mvp = proj * model * view; // In OpenGL, projection is proj * model * view due to column major
-                shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
-            }
-
-            if (rChannel > 1.0f)
-                increment = -0.05f;
-            else if (rChannel < 0.0f)
-                increment = 0.05f;
-
-            rChannel += increment;
-
             glfwSwapBuffers(window);
         }
+
+        delete currentTest;
+        if (currentTest != testMenu)
+            delete testMenu;
     }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
