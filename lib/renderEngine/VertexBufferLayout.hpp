@@ -27,6 +27,8 @@ private:
 public:
     VertexBufferLayout() : m_Stride(0) {};
 
+    /* add a `VertexBufferElement` to `m_Elements`.*
+     * The template is specialized for int, float, or char. The stride is automatically updated. */
     template<typename T>
     void Push(const unsigned int& count);
 

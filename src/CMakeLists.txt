@@ -10,5 +10,6 @@ target_link_libraries(OpenGL-starter
         glad
         glfw
         glm::glm
+        imgui
         RenderEngine
 )
