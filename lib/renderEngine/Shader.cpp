@@ -1,4 +1,6 @@
 #include "Shader.hpp"
+#include "GLErrorManager.hpp"
+#include "glad.h"
 
 Shader::Shader(const std::string& filepath) 
 : m_FilePath(filepath){
@@ -37,6 +39,10 @@ void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix) {
     // Provide 1 matrix, glm stores in column order so no need to transpose,
     // and pass pointer to array using first element
     GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
+void Shader::SetUniformMat3f(const std::string& name, const glm::mat3& matrix) {
+    GLCall(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
@@ -109,10 +115,11 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
     return program;
 }
 
-int Shader::GetUniformLocation(const std::string& name) {
+GLint Shader::GetUniformLocation(const std::string& name) const {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+        // Value is in the cache
         return m_UniformLocationCache[name];
-    GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
+    GLCall(GLint location = glGetUniformLocation(m_RendererID, name.c_str()));
     if (location == -1)
         std::cerr << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
     m_UniformLocationCache[name] = location;

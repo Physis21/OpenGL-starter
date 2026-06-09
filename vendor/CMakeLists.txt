@@ -1,5 +1,22 @@
 include(FetchContent)
 
+# Detect WSL, to set wayland support or not
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+    file(READ "/proc/version" PROC_VERSION)
+    if(PROC_VERSION MATCHES "Microsoft|WSL")
+        set(IS_WSL TRUE)
+    endif()
+endif()
+
+# Configure GLFW accordingly
+if(IS_WSL)
+    message(STATUS "WSL detected — disabling Wayland, enabling X11")
+    # Store in the CMake cache `CMakeCache.txt` that persists between runs
+    # "" is the docstring and FORCE tells to overwrite if the cache entry already exists
+    set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+    set(GLFW_BUILD_X11    ON  CACHE BOOL "" FORCE)
+endif()
+
 # stb library
 FetchContent_Declare(
     stb
@@ -11,6 +28,13 @@ FetchContent_MakeAvailable(stb)
 add_library(stb_image STATIC stb/stb_image.cpp)
 # Tell the compiler where to find the header files for stb_image (-I search path flag)
 target_include_directories(stb_image PUBLIC ${stb_SOURCE_DIR})
+
+# glfw
+FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(glfw)
 
 # glad library to find OpenGL functions
 add_subdirectory(glad)
@@ -45,4 +69,7 @@ target_sources(imgui # include only relevant source files
     ${imgui_SOURCE_DIR}/imgui_widgets.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-  )
+)
+target_link_libraries(imgui # imgui_impl_glfw requires glfw
+    PRIVATE glfw
+)

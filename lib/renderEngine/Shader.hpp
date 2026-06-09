@@ -21,7 +21,7 @@ class Shader {
         std::string m_FilePath;
         unsigned int m_RendererID;
         // caching for uniforms
-        std::unordered_map<std::string, int> m_UniformLocationCache;
+        mutable std::unordered_map<std::string, GLint> m_UniformLocationCache;
 
 
     public:
@@ -37,11 +37,27 @@ class Shader {
         void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
         void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
 
+        void SetUniformMat3f(const std::string& name, const glm::mat3& matrix);
+
 
     private:
         ShaderProgramSource ParseShader(const std::string& filepath);
+        /* Create the shader, assign the source (code text) to it and compile it.
+         * If the shader could not be compiled, log an error and return 0.
+         * @param[in] shaderType the type of shader (e.g GL_FRAGMENT_SHADER)
+         * @param[in] source the source code for the shader
+         * @returns the id of the compiled shader.
+         */
         unsigned int CompileShader(unsigned int shaderType, const std::string& source);
+        /* Compile the vertex and fragment shader, attach them to the
+         * shader program pointed by m_RendererID, link the program object
+         * then validate it.
+         * The fragment and vertex shaders are then detached from the program and deleted.
+         * @param[in] vertexShader the code for the vertex shader
+         * @param[in] fragmentShader the code for the fragment shader
+         * @returns the program number.
+         */
         unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
-        int GetUniformLocation(const std::string& name);
+        GLint GetUniformLocation(const std::string& name) const;
 
 };

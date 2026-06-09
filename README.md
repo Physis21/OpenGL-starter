@@ -4,8 +4,13 @@
 
 In this project:
 
-- `glad` is used to search for OpenGL functions
-- `glfw` is used to open windows. It was installed on my system with `sudo apt-get install libglfw3-dev`
+- `glad` is used to search for OpenGL functions above 1.0
+- `glfw` is used to open windows.
+  I fetch it using FetchContent, and use the X11 **display server protocols** if running
+  on WSL, or Wayland if running on another Linux distro.
+  Wayland is faster and more secure, but isn't supported by WSL.
+- `glm` is used for math involving OpenGL
+- `stb_image` is used to load images as textures
 
 ## Documentation for OpenGL
 
@@ -25,14 +30,14 @@ Great site for OpenGL documentation: [docs.gl](https://docs.gl/gl3/glBufferData)
 
 - **MVP or PVM**:
   Model view projection matrix. Transformation pipeline that goes through each vertex.
-  Model, view and projection are each a 4 by 4 matrix, and they all get multiplied in that order 
+  Model, view and projection are each a 4 by 4 matrix, and they all get multiplied in that order
   (actually PVM in OpenGL, MVP in DirectX due to row ordering)
 
 - **Normalized divise coordinates**:
   Normalized space we can then map to the window. Normalized as in between +-1.
 
 - **Projections**:
-  Allow you to decide what your coordinate space is so you can render objects however you like (inside or outside screen), 
+  Allow you to decide what your coordinate space is so you can render objects however you like (inside or outside screen),
   and worry about normalization later.
   Orthographic projecetion is usually used for 2D, as opposed to perspective projection which is used for 3D.
 
