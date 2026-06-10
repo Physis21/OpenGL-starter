@@ -7,7 +7,7 @@ namespace test {
 
     TestTexture2D::TestTexture2D() 
     : 
-        m_Proj(glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -1.0f, 1.0f)),
+        m_Proj(glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -240.0f, 240.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
         m_TranslationA(0, 0, 0), 
         m_TranslationB(150, 0, 0),
