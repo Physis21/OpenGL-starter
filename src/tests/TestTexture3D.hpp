@@ -20,6 +20,10 @@
 
 
 namespace test {
+    struct XYRotation {
+        float x;
+        float y;
+    };
 
     class TestTexture3D: public Test {
         public:
@@ -41,6 +45,7 @@ namespace test {
             glm::mat4 m_Proj;
             glm::mat4 m_View;
             glm::vec3 m_TranslationA, m_TranslationB;
+            XYRotation m_XYRotationA, m_XYRotationB;
 
             float m_ClearColor[4];
             ImGuiIO& m_ImGuiIO;

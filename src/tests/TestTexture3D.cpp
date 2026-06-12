@@ -1,19 +1,26 @@
 #include "TestTexture3D.hpp"
-#include <array>
 
 namespace test {
 
     TestTexture3D::TestTexture3D() 
     : 
-        m_Proj(glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, 0.0f, 480.0f)),
+        // glm::perspective divides X and Y by Z (perspective divide).
+        m_Proj(glm::perspective(
+            glm::radians(45.0f),    // Field of view (vertical angle)
+            4.0f / 3.0f,        // Aspect ratio
+            0.1f,                   // Near plane
+            1000.0f                 // Far plane
+        )),
         // m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
         m_View(glm::lookAtRH(
             glm::vec3(0.0f, 0.0f, 0.0f), // eye position
             glm::vec3(0.0f, 0.0f, -1.0f), // Looking down the Z axis
             glm::vec3(0.0f, 1.0f, 0.0f) // up direction
         )), // In this particular case, `lookAt()` produces the identity matrix.
-        m_TranslationA(0, 0, 0), 
-        m_TranslationB(150, 0, 0),
+        m_TranslationA(0, 0, -100.0f), 
+        m_TranslationB(150, 0, -100.0f),
+        m_XYRotationA{0.0f, 0.0f},
+        m_XYRotationB{0.0f, 0.0f},
         m_ClearColor{0.0f, 0.0f, 0.0f, 1.00f},
         m_ImGuiIO(ImGui::GetIO())
     {
@@ -21,10 +28,10 @@ namespace test {
         /* Square with 2 triangles, possibly oriented.
          * 3 positions, then 2 texture coordinates */
         std::array<float, 20> positions = {
-            -100, -140, -100.0f ,0.0f, 0.0f, // 0
-             100, -140, -100.0f, 1.0f, 0.0f, // 1
-             100,  140, -100.0f, 1.0f, 1.0f, // 2
-            -100,  140, -100.0f, 0.0f, 1.0f, // 3
+            -100, -140, 0.0f ,0.0f, 0.0f, // 0
+             100, -140, 0.0f, 1.0f, 0.0f, // 1
+             100,  140, 0.0f, 1.0f, 1.0f, // 2
+            -100,  140, 0.0f, 0.0f, 1.0f, // 3
         };
 
         /* indices HAVE to be unsigned */
@@ -84,14 +91,18 @@ namespace test {
         // Here we have redundant Shader bindings. In actual game engines, a caching system would be implemented to prevent this.
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
-            glm::mat4 mvp = m_Proj * model * m_View; // In OpenGL, projection is proj * model * view due to column major
+            model = glm::rotate(model, glm::radians(m_XYRotationA.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(m_XYRotationA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB);
-            glm::mat4 mvp = m_Proj * model * m_View; // In OpenGL, projection is proj * model * view due to column major
+            model = glm::rotate(model, glm::radians(m_XYRotationB.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(m_XYRotationB.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
@@ -105,16 +116,17 @@ namespace test {
 
             ImGui::Begin("My GUI window!");                          // Create a window called "Hello, world!" and append into it.
 
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+            ImGui::Text("Object A transformations");
+            ImGui::SliderFloat2("translationA x&y", &m_TranslationA.x, -200.0f, 200.0f);
+            ImGui::SliderFloat("translationA z", &m_TranslationA.z, 0.0f, -400.0f);
+            ImGui::SliderFloat2("rotationA x&y axis", &m_XYRotationA.x, -90.0f, 90.0f);
 
-            ImGui::SliderFloat3("translationA", &m_TranslationA.x, -200.0f, 200.0f); // Giving .x ref gives pointer to x, y & z
-            ImGui::SliderFloat3("translationB", &m_TranslationB.x, -200.0f, 200.0f); // Giving .x ref gives pointer to x, y & z
+            ImGui::Text("Object B transformations");
+            ImGui::SliderFloat2("translationB x&y", &m_TranslationB.x, -200.0f, 200.0f);
+            ImGui::SliderFloat("translationB z", &m_TranslationB.z, 0.0f, -400.0f);
+            ImGui::SliderFloat2("rotationB x&y axis", &m_XYRotationB.x, -90.0f, 90.0f);
+
             ImGui::ColorEdit3("clear color", m_ClearColor); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_ImGuiIO.Framerate, m_ImGuiIO.Framerate);
             ImGui::End();

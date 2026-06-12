@@ -4,6 +4,7 @@ namespace test {
 
     TestTexture2D::TestTexture2D() 
     : 
+        // glm::ortho simply drops the Z coordinate, and lines stay parallel. Objects look the same regardless of depth.
         m_Proj(glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -240.0f, 240.0f)),
         m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
         m_TranslationA(0, 0, 0), 
@@ -79,14 +80,14 @@ namespace test {
         // Here we have redundant Shader bindings. In actual game engines, a caching system would be implemented to prevent this.
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
-            glm::mat4 mvp = m_Proj * model * m_View; // In OpenGL, projection is proj * model * view due to column major
+            glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB);
-            glm::mat4 mvp = m_Proj * model * m_View; // In OpenGL, projection is proj * model * view due to column major
+            glm::mat4 mvp = m_Proj * m_View * model ; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);

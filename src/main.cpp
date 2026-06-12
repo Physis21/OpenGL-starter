@@ -38,7 +38,7 @@ int main(int argc, char**argv){
     // Create window with graphics context
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
     GLFWwindow* window;
-    window = glfwCreateWindow((int)(640 * main_scale), (int)(480 * main_scale), "openGL-starter window!", nullptr, nullptr);
+    window = glfwCreateWindow((int)(1280 * main_scale), (int)(960 * main_scale), "openGL-starter window!", nullptr, nullptr);
     if (!window) {
         std::cerr << "Couldn't open Window" << std::endl;
         glfwTerminate();
