@@ -8,12 +8,14 @@ target_sources(OpenGL-starter
         tests/TestClearColor.cpp
         tests/TestTexture2D.cpp
         tests/TestTexture3D.cpp
+        tests/TestObjLoad.cpp
     PRIVATE FILE_SET HEADERS FILES
         main.hpp
         tests/Test.hpp
         tests/TestClearColor.hpp
         tests/TestTexture2D.hpp
         tests/TestTexture3D.hpp
+        tests/TestObjLoad.hpp
 )
 target_link_libraries(OpenGL-starter
     PRIVATE

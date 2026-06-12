@@ -27,3 +27,4 @@
 #include "tests/TestClearColor.hpp"
 #include "tests/TestTexture2D.hpp"
 #include "tests/TestTexture3D.hpp"
+#include "tests/TestObjLoad.hpp"

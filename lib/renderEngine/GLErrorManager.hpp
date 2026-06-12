@@ -1,6 +1,8 @@
 #pragma once
+#include <cstddef>
 #include <iostream>
 #include <signal.h>
+#include <vector>
 #include "glad.h"
 
 #define ASSERT(x) if (!(x)) raise(SIGTRAP)
@@ -12,3 +14,11 @@
 void MyGLClearError();
 
 bool MyGLLogCall(const char* functionName, const char* file, int line);
+
+template <typename T>
+void PrintVector(std::vector<T> vector) {
+    for (int i = 0; i < vector.size(); i++) {
+        std::cout << vector[i] << ", ";
+    }
+    std::cout << std::endl;
+}

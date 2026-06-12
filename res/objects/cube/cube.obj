@@ -1,4 +1,4 @@
-mtllib cube.tml
+# mtllib cube.tml
 # cube.obj
 # Import into Blender with Y-forward, Z-up
 #
@@ -14,64 +14,64 @@ mtllib cube.tml
 #                                           6
 #                                        bottom
 
-g cube
+o cube
 
-# Vertices
-v 0.0 0.0 0.0  # 1 a
-v 0.0 1.0 0.0  # 2 b
-v 1.0 1.0 0.0  # 3 c
-v 1.0 0.0 0.0  # 4 d
-v 0.0 0.0 1.0  # 5 e
-v 0.0 1.0 1.0  # 6 f
-v 1.0 1.0 1.0  # 7 g
-v 1.0 0.0 1.0  # 8 h
+  # Vertices
+  v 0.0 0.0 0.0  # 1 a
+  v 0.0 1.0 0.0  # 2 b
+  v 1.0 1.0 0.0  # 3 c
+  v 1.0 0.0 0.0  # 4 d
+  v 0.0 0.0 1.0  # 5 e
+  v 0.0 1.0 1.0  # 6 f
+  v 1.0 1.0 1.0  # 7 g
+  v 1.0 0.0 1.0  # 8 h
 
-# UV coordinates for texture mapping
-vt 0.0 0.0
-vt 1.0 0.0
-vt 1.0 1.0
-vt 0.0 1.0
+  # UV coordinates for texture mapping
+  vt 0.0 0.0
+  vt 1.0 0.0
+  vt 1.0 1.0
+  vt 0.0 1.0
 
-# Normal vectors
-# One for each face. Shared by all vertices in that face.
-vn  1.0  0.0  0.0  # 1 cghd
-vn -1.0  0.0  0.0  # 2 aefb
-vn  0.0  1.0  0.0  # 3 gcbf
-vn  0.0 -1.0  0.0  # 4 dhea
-vn  0.0  0.0  1.0  # 5 hgfe
-vn  0.0  0.0 -1.0  # 6 cdab
+  # Normal vectors
+  # One for each face. Shared by all vertices in that face.
+  vn  1.0  0.0  0.0  # 1 cghd
+  vn -1.0  0.0  0.0  # 2 aefb
+  vn  0.0  1.0  0.0  # 3 gcbf
+  vn  0.0 -1.0  0.0  # 4 dhea
+  vn  0.0  0.0  1.0  # 5 hgfe
+  vn  0.0  0.0 -1.0  # 6 cdab
 
-# Faces v/vt/vn
-#   3-------2
-#   | -     |
-#   |   #   |  Each face = 2 triangles (ccw)
-#   |     - |            = 1-2-3 + 1-3-4
-#   4-------1
+  # Faces v/vt/vn
+  #   3-------2
+  #   | -     |
+  #   |   #   |  Each face = 2 triangles (ccw)
+  #   |     - |            = 1-2-3 + 1-3-4
+  #   4-------1
 
-# Tell the faces to use the material before definition
-usemtl cube_material
+  # Tell the faces to use the material before definition
+  # usemtl cube_material
 
-# Face 1: cghd = cgh + chd
-# Here means: triangle using vertices 3, 7, 8 all sharing normal 1
-f 3/3/1 7/2/1 8/1/1
-f 3/3/1 8/1/1 4/4/1
+  # Face 1: cghd = cgh + chd
+  # Here means: triangle using vertices 3, 7, 8 all sharing normal 1
+  f 3/3/1 7/2/1 8/1/1
+  f 3/3/1 8/1/1 4/4/1
 
-# Face 2: aefb = aef + afb
-f 1/3/2 5/2/2 6/1/2
-f 1/3/2 6/1/2 2/4/2
+  # Face 2: aefb = aef + afb
+  f 1/3/2 5/2/2 6/1/2
+  f 1/3/2 6/1/2 2/4/2
 
-# Face 3: gcbf = gcb + gbf
-f 7/3/3 3/2/3 2/1/3
-f 7/3/3 2/1/3 6/4/3
+  # Face 3: gcbf = gcb + gbf
+  f 7/3/3 3/2/3 2/1/3
+  f 7/3/3 2/1/3 6/4/3
 
-# Face 4: dhea = dhe + dea
-f 4/3/4 8/2/4 5/1/4
-f 4/3/4 5/1/4 1/4/4
+  # Face 4: dhea = dhe + dea
+  f 4/3/4 8/2/4 5/1/4
+  f 4/3/4 5/1/4 1/4/4
 
-# Face 5: hgfe = hgf + hfe
-f 8/3/5 7/2/5 6/1/5
-f 8/3/5 6/1/5 5/4/5
+  # Face 5: hgfe = hgf + hfe
+  f 8/3/5 7/2/5 6/1/5
+  f 8/3/5 6/1/5 5/4/5
 
-# Face 6: cdab = cda + cab
-f 3/3/6 4/2/6 1/1/6
-f 3/3/6 1/1/6 2/4/6
+  # Face 6: cdab = cda + cab
+  f 3/3/6 4/2/6 1/1/6
+  f 3/3/6 1/1/6 2/4/6

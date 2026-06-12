@@ -116,6 +116,7 @@ int main(int argc, char**argv){
         testMenu->RegisterTest<test::TestClearColor>("Clear Color");
         testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
         testMenu->RegisterTest<test::TestTexture3D>("3D Texture");
+        testMenu->RegisterTest<test::TestObjLoad>("OBJ file loading");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

@@ -18,16 +18,12 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 
-#include "tiny_obj_loader.h"
-
-
 namespace test {
-    struct XYRotation {
-        float x;
-        float y;
-    };
-
     class TestTexture3D: public Test {
+        struct XYRotation {
+            float x;
+            float y;
+        };
         public:
             TestTexture3D();
             ~TestTexture3D();

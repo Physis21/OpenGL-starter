@@ -1,4 +1,5 @@
 #include "GLErrorManager.hpp"
+#include <ostream>
 
 void MyGLClearError() {
     while (glGetError() != GL_NO_ERROR);

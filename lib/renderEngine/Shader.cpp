@@ -6,8 +6,8 @@ Shader::Shader(const std::string& filepath)
 : m_FilePath(filepath){
     ShaderProgramSource source = ParseShader(filepath);
 
-    std::cout <<"Vertex source:\n" << source.VertexSource << std::endl;
-    std::cout <<"Fragment source:\n" << source.FragmentSource << std::endl;
+    // std::cout <<"Vertex source:\n" << source.VertexSource << std::endl;
+    // std::cout <<"Fragment source:\n" << source.FragmentSource << std::endl;
 
     m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
 }
