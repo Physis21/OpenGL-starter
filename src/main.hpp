@@ -26,3 +26,4 @@
 #include "tests/Test.hpp"
 #include "tests/TestClearColor.hpp"
 #include "tests/TestTexture2D.hpp"
+#include "tests/TestTexture3D.hpp"
