@@ -22,5 +22,6 @@ target_link_libraries(OpenGL-starter
         glm::glm
         imgui
         RenderEngine
+        tinyobjloader
 )
 

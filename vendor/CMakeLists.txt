@@ -73,3 +73,15 @@ target_sources(imgui # include only relevant source files
 target_link_libraries(imgui # imgui_impl_glfw requires glfw
     PRIVATE glfw
 )
+
+# TinyObj for loading obj files
+FetchContent_Declare(
+    tinyobjloader
+    GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader
+    GIT_TAG v2.0.0rc13
+)
+FetchContent_MakeAvailable(tinyobjloader)
+# Compile stb_image into a static library via the wrapper
+add_library(tinyobjloader_c STATIC tinyobj/tinyobj.cpp)
+# Tell the compiler where to find the header files for stb_image (-I search path flag)
+target_include_directories(tinyobjloader_c PUBLIC ${tinyobjloader_SOURCE_DIR})

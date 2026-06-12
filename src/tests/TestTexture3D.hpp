@@ -18,6 +18,8 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 
+#include "tiny_obj_loader.h"
+
 
 namespace test {
     struct XYRotation {
