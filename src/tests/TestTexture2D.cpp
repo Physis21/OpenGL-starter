@@ -69,11 +69,8 @@ namespace test {
 
     }
     void TestTexture2D::OnRender() {
-        GLCall(glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]));
-        // GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
-
         Renderer renderer;
+        renderer.Clear(m_ClearColor);
 
         m_Texture->Bind();
 

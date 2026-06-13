@@ -1,3 +1,13 @@
+/*
+ * When loading OBJ files with tinyobj, it is more standard to preprocess to data so that
+ * all the OBJ data is stored in a single Vertex Buffer Object.
+ *
+ * The reason is that using multiple VBOs induces more state changes, and is less GPU cache friendly.
+ * Multiple VBOs would be good if attributes updated at different frequencies,
+ * you want to re-use an attribute buffer across multiple meshes, or you're doing GPU-driven rendering
+ * with attribute streams that vary at every pass.
+ */
+
 #include "TestObjLoad.hpp"
 
 namespace test {
@@ -9,7 +19,7 @@ namespace test {
             glm::radians(45.0f),    // Field of view (vertical angle)
             4.0f / 3.0f,        // Aspect ratio
             0.1f,                   // Near plane
-            1000.0f                 // Far plane
+            20.0f                 // Far plane
         )),
         // m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))),
         m_View(glm::lookAtRH(
@@ -17,10 +27,10 @@ namespace test {
             glm::vec3(0.0f, 0.0f, -1.0f), // Looking down the Z axis
             glm::vec3(0.0f, 1.0f, 0.0f) // up direction
         )), // In this particular case, `lookAt()` produces the identity matrix.
-        m_TranslationA(0, 0, -10.0f), 
-        m_TranslationB(150, 0, -10.0f),
-        m_XYRotationA{0.0f, 0.0f},
-        m_XYRotationB{0.0f, 0.0f},
+        m_TranslationA(0, 0, -5.0f), 
+        m_TranslationB(2, 0, -5.0f),
+        m_XYRotationA{20.0f, 20.0f},
+        m_XYRotationB{20.0f, 20.0f},
         m_ImGuiIO(ImGui::GetIO())
     {
         (void) m_ImGuiIO; // Compiler unused warning suppresion trick
@@ -55,7 +65,7 @@ namespace test {
         const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
         const std::vector<tinyobj::material_t>& materials = reader.GetMaterials();
 
-        std::cout << "Number of shapes: " << shapes.size() << std::endl;
+        std::cout << "Number of shapes: " << shapes.size() << std::endl; // In this test, use a single cube
         if (!shapes.empty())
             std::cout << "Number of indices: " << shapes[0].mesh.indices.size() << std::endl;
 
@@ -102,6 +112,8 @@ namespace test {
     }
     void TestObjLoad::OnRender() {
         Renderer renderer;
+        GLfloat clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        renderer.Clear(clearColor);
 
         // m_Texture->Bind();
 
@@ -127,6 +139,8 @@ namespace test {
 
     }
     void TestObjLoad::OnImGuiRender() {
+        float maxXOrY = 10.0f;
+        float maxZ = 20.0f;
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
             static int counter = 0;
@@ -134,13 +148,13 @@ namespace test {
             ImGui::Begin("My GUI window!");                          // Create a window called "Hello, world!" and append into it.
 
             ImGui::Text("Object A transformations");
-            ImGui::SliderFloat2("translationA x&y", &m_TranslationA.x, -200.0f, 200.0f);
-            ImGui::SliderFloat("translationA z", &m_TranslationA.z, 0.0f, -400.0f);
+            ImGui::SliderFloat2("translationA x&y", &m_TranslationA.x, -maxXOrY, maxXOrY);
+            ImGui::SliderFloat("translationA z", &m_TranslationA.z, 0.0f, -maxZ);
             ImGui::SliderFloat2("rotationA x&y axis", &m_XYRotationA.x, -90.0f, 90.0f);
 
             ImGui::Text("Object B transformations");
-            ImGui::SliderFloat2("translationB x&y", &m_TranslationB.x, -200.0f, 200.0f);
-            ImGui::SliderFloat("translationB z", &m_TranslationB.z, 0.0f, -400.0f);
+            ImGui::SliderFloat2("translationB x&y", &m_TranslationB.x, -maxXOrY, maxXOrY);
+            ImGui::SliderFloat("translationB z", &m_TranslationB.z, 0.0f, -maxZ);
             ImGui::SliderFloat2("rotationB x&y axis", &m_XYRotationB.x, -90.0f, 90.0f);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_ImGuiIO.Framerate, m_ImGuiIO.Framerate);

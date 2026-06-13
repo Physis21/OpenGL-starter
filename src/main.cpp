@@ -107,8 +107,6 @@ int main(int argc, char**argv){
 
     /* Create a scope to call destructors of objects before the glfw termination deletes the OpenGL context */
     {
-        Renderer renderer;
-
         test::Test* currentTest = nullptr;
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
         currentTest = testMenu;
@@ -120,9 +118,6 @@ int main(int argc, char**argv){
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
-            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-            renderer.Clear();
-
             // Poll and handle events (inputs, window resize, etc.)
             // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
             // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.

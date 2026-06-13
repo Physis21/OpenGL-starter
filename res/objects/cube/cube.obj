@@ -16,15 +16,15 @@
 
 o cube
 
-  # Vertices
-  v 0.0 0.0 0.0  # 1 a
-  v 0.0 1.0 0.0  # 2 b
-  v 1.0 1.0 0.0  # 3 c
-  v 1.0 0.0 0.0  # 4 d
-  v 0.0 0.0 1.0  # 5 e
-  v 0.0 1.0 1.0  # 6 f
-  v 1.0 1.0 1.0  # 7 g
-  v 1.0 0.0 1.0  # 8 h
+  # Vertices (centered)
+  v -0.5 -0.5 -0.5  # 1 a
+  v -0.5  0.5 -0.5  # 2 b
+  v  0.5  0.5 -0.5  # 3 c
+  v  0.5 -0.5 -0.5  # 4 d
+  v -0.5 -0.5  0.5  # 5 e
+  v -0.5  0.5  0.5  # 6 f
+  v  0.5  0.5  0.5  # 7 g
+  v  0.5 -0.5  0.5  # 8 h
 
   # UV coordinates for texture mapping
   vt 0.0 0.0
@@ -52,7 +52,7 @@ o cube
   # usemtl cube_material
 
   # Face 1: cghd = cgh + chd
-  # Here means: triangle using vertices 3, 7, 8 all sharing normal 1
+  # Here means: triangle using vertices 3, 7, 8, with UV coordinates 3, 2, 1, all sharing normal 1.
   f 3/3/1 7/2/1 8/1/1
   f 3/3/1 8/1/1 4/4/1
 

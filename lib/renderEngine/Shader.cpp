@@ -1,6 +1,4 @@
 #include "Shader.hpp"
-#include "GLErrorManager.hpp"
-#include "glad.h"
 
 Shader::Shader(const std::string& filepath) 
 : m_FilePath(filepath){

@@ -27,7 +27,7 @@ void VertexBufferLayout::Push(const unsigned int& count) {
 
 template<>
 void VertexBufferLayout::Push<float>(const unsigned int& count) {
-    m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
+    m_Elements.push_back({ GL_FLOAT, count, GL_FALSE }); // not normalized
     m_Stride += VertexBufferElement::GetSizeOfType(GL_FLOAT) * count;
 }
 
@@ -39,6 +39,6 @@ void VertexBufferLayout::Push<unsigned int>(const unsigned int& count) {
 
 template<>
 void VertexBufferLayout::Push<unsigned char>(const unsigned int& count) {
-    m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
+    m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE }); // Normalized
     m_Stride += VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE) * count;
 }

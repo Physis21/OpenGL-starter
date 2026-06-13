@@ -2,15 +2,15 @@
 
 #include <memory>
 
-#include "IndexBuffer.hpp"
-#include "Test.hpp"
-#include "GLErrorManager.hpp"
 #include "glad.h"
 #include "imgui.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "GLErrorManager.hpp"
+#include "Test.hpp"
 #include "VertexBufferLayout.hpp"
+#include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "Texture.hpp"
@@ -39,7 +39,7 @@ namespace test {
             glm::vec3 m_TranslationA, m_TranslationB;
 
             bool m_ShowAnotherWindow;
-            float m_ClearColor[4];
+            GLfloat m_ClearColor[4];
             ImGuiIO& m_ImGuiIO;
     };
 
