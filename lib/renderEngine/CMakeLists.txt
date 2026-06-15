@@ -13,6 +13,7 @@ target_sources(RenderEngine
         Shader.cpp
         Renderer.cpp
         Texture.cpp
+        ObjLoader.cpp
     PUBLIC FILE_SET HEADERS FILES
         GLErrorManager.hpp
         VertexBuffer.hpp
@@ -22,10 +23,12 @@ target_sources(RenderEngine
         Shader.hpp
         Renderer.hpp
         Texture.hpp
+        ObjLoader.hpp
 )
 
 target_link_libraries(RenderEngine
     glad
     stb_image
     glm::glm
+    tinyobjloader
 )

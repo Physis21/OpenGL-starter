@@ -36,6 +36,7 @@ namespace test {
             void OnImGuiRender() override;
 
         private:
+            // TODO: change VertexBuffer and IndexBuffer to unique_ptr to ObjLoader
             std::unique_ptr<VertexArray> m_VAO;
             std::unique_ptr<VertexBuffer> m_VertexBuffer;
             std::unique_ptr<IndexBuffer> m_IndexBuffer;
