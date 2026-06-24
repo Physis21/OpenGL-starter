@@ -1,4 +1,4 @@
-# mtllib cube.tml
+mtllib cube.mtl
 # cube.obj
 # Import into Blender with Y-forward, Z-up
 #
@@ -49,7 +49,7 @@ o cube
   #   4-------1
 
   # Tell the faces to use the material before definition
-  # usemtl cube_material
+  usemtl cube_material
 
   # Face 1: cghd = cgh + chd
   # Here means: triangle using vertices 3, 7, 8, with UV coordinates 3, 2, 1, all sharing normal 1.

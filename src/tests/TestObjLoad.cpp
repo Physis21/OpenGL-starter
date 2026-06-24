@@ -48,94 +48,32 @@ namespace test {
          * NOTE: the alpha value also goes through the equation */
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-
-        /***********************************
-         * Loading obj files with tinyobj 
-         ***********************************/
-        tinyobj::ObjReaderConfig reader_config;
-        reader_config.mtl_search_path = "./"; // Path to material files
-        tinyobj::ObjReader reader;
-        
-        if (!reader.ParseFromFile("res/objects/cube/cube.obj", reader_config)) {
-          if (!reader.Error().empty())
-              std::cerr << "TinyObjReader: " << reader.Error();
-          exit(1);
-        }
-
-        if (!reader.Warning().empty())
-          std::cout << "TinyObjReader: " << reader.Warning();
-
-        const tinyobj::attrib_t& attrib = reader.GetAttrib();
-        const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
-        const std::vector<tinyobj::material_t>& materials = reader.GetMaterials();
-
-        std::cout << "Number of shapes: " << shapes.size() << std::endl; // In this test, use a single cube
-        if (!shapes.empty())
-            std::cout << "Number of indices: " << shapes[0].mesh.indices.size() << std::endl;
-
+        /* Test out iteration over the single shape. */
+        // Layout, VB, VAO init
+        VertexBufferLayout layout;
+        layout.Push<tinyobj::real_t>(3); // Vertex index
+        layout.Push<tinyobj::real_t>(3); // Normal index
+        layout.Push<tinyobj::real_t>(2); // TexCoord index
         m_VAO = std::make_unique<VertexArray>();
 
-        std::cout << "Size of extracted vertex buffer: " << attrib.vertices.size() << std::endl;
-        PrintVector<tinyobj::real_t>(attrib.vertices);
-        m_VertexBuffer = std::make_unique<VertexBuffer>(attrib.vertices.data(), attrib.vertices.size() * sizeof(tinyobj::real_t));
-        VertexBufferLayout layout;
-        layout.Push<tinyobj::real_t>(3);
-        // layout.Push<float>(2);
+        // Get vertex and index buffer from objLoader
+        std::string mtl_path = "res/objects/cube/";
+        ObjLoader objLoader("res/objects/cube/cube.obj", mtl_path);
+        std::vector<Vertex> vertices = objLoader.GetVertices();
+        std::vector<uint32_t> indices = objLoader.GetIndices();
+        tinyobj::material_t material = objLoader.GetMaterial();
+
+        std::cout << "Vertex buffer: \n";
+        std::cout << vertices;
+        std::cout << "index buffer: \n";
+        for (int i = 0; i < indices.size(); i++) {
+            std::cout << indices[i] << " ";
+        }
+        std::cout << std::endl;
+
+        m_VertexBuffer = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(Vertex));
         m_VAO->AddBuffer(*m_VertexBuffer, layout);
-
-        // Extract the index buffer from the mesh indices of the single shape
-        std::vector<unsigned int> indices;
-        indices.reserve(shapes[0].mesh.indices.size());
-        for (const auto& idx : shapes[0].mesh.indices) {
-            indices.push_back(static_cast<unsigned int>(idx.vertex_index));
-        }
-        std::cout << "Size of extracted index buffer: " << indices.size() << std::endl;
-        PrintVector<unsigned int>(indices);
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices.data(), indices.size());
-        std::cout << "IndexBuffer constructed OK" << std::endl;
-
-        /* Test out iteration */
-        // Loop over faces(polygon). In the case of a cube, num_face_vertices.size() = 12 = 6 faces * 2 triangles per face
-        size_t index_offset = 0;
-        for (size_t f = 0; f < shapes[0].mesh.num_face_vertices.size(); f++) {
-            size_t fv = size_t(shapes[0].mesh.num_face_vertices[f]); // Always equal to 3 in our case since each face is a triangle
-            std::cout << "f = " << f << ", fv = " << fv << "\n";
-
-            // Loop over vertices in the face.
-            for (size_t v = 0; v < fv; v++) {
-                // access to vertex
-                // index_t gives vertex_index, normal_index, texcoord_index
-                tinyobj::index_t idx = shapes[0].mesh.indices[index_offset + v];
-                tinyobj::real_t vx = attrib.vertices[3*size_t(idx.vertex_index)+0];
-                tinyobj::real_t vy = attrib.vertices[3*size_t(idx.vertex_index)+1];
-                tinyobj::real_t vz = attrib.vertices[3*size_t(idx.vertex_index)+2];
-
-                // Check if `normal_index` is zero or positive. negative = no normal data
-                if (idx.normal_index >= 0) {
-                tinyobj::real_t nx = attrib.normals[3*size_t(idx.normal_index)+0];
-                tinyobj::real_t ny = attrib.normals[3*size_t(idx.normal_index)+1];
-                tinyobj::real_t nz = attrib.normals[3*size_t(idx.normal_index)+2];
-                }
-
-                // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-                if (idx.texcoord_index >= 0) {
-                tinyobj::real_t tx = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
-                tinyobj::real_t ty = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
-                }
-
-                std::cout
-                    << "idx: " << idx.vertex_index << ", " << idx.normal_index << ", " << idx.texcoord_index
-                    << "\n";
-
-                // Optional: vertex colors
-                // tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
-                // tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
-                // tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
-            }
-            index_offset += fv;
-            // per-face material
-            // shapes[0].mesh.material_ids[f];
-        }
 
         /* EndTest out iteration */
 
@@ -143,14 +81,16 @@ namespace test {
         m_Shader->Bind();
 
         // m_Texture = std::make_unique<Texture>("res/textures/TsukihimeLogo.png");
-        // m_Shader->SetUniform1i("u_Texture", 0); // 0 because we bind the texture to slot 0
+        std::cout << "texture to load: " << mtl_path + material.diffuse_texname << "\n";
+        m_Texture = std::make_unique<Texture>(mtl_path + material.diffuse_texname);
+        m_Shader->SetUniform1i("u_Texture", 0); // 0 because we bind the texture to slot 0
         /***********************************
          * Unbind buffers and programs
          ***********************************/
-        // m_VAO->Unbind();
-        // m_VertexBuffer->Unbind();
-        // m_IndexBuffer->Unbind();
-        // m_Shader->Unbind();
+        m_VAO->Unbind();
+        m_VertexBuffer->Unbind();
+        m_IndexBuffer->Unbind();
+        m_Shader->Unbind();
     }
     TestObjLoad::~TestObjLoad() {
 
@@ -164,7 +104,7 @@ namespace test {
         GLfloat clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
         renderer.Clear(clearColor);
 
-        // m_Texture->Bind();
+        m_Texture->Bind();
 
         // Here we have redundant Shader bindings. In actual game engines, a caching system would be implemented to prevent this.
         {

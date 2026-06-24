@@ -18,6 +18,7 @@ bool IndexEqual::operator()(const tinyobj::index_t& a, const tinyobj::index_t& b
 }
 
 ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_path) {
+
     tinyobj::ObjReaderConfig reader_config;
     reader_config.mtl_search_path = mtl_search_path; // Path to material files
     tinyobj::ObjReader reader;
@@ -37,6 +38,8 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
     const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
     const std::vector<tinyobj::material_t>& materials = reader.GetMaterials();
 
+    m_Material = materials[0];
+
     // Log info about the loaded shape
     std::cout << "Number of shapes: " << shapes.size() << std::endl; // In this test, use a single cube
     if (!shapes.empty())
@@ -47,6 +50,7 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
     m_Indices = {};
 
     // At the moment, only support a single shape per OBJ file
+    // and always require normal + texture
     const auto shape = shapes[0];
     for (const tinyobj::index_t& idx : shape.mesh.indices) {
         Vertex vertex{};
@@ -67,7 +71,6 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
         };
 
         // Only add to VBO if this exact combination hasn't been seen
-        // TODO: adapt from Claude code to hashing Indices
         if (m_UniqueVertices.count(idx) == 0) {
             m_UniqueVertices[idx] = m_Vertices.size();
             m_Vertices.push_back(vertex);
@@ -76,9 +79,18 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
         m_Indices.push_back(m_UniqueVertices[idx]);
     }
 
-    // TODO: Create VertexBufferLayout, and create VAO. Then assign values to the VertexBufferObject and IndexBuffer to return with getters
+    // After this, create VertexBufferLayout, and create VAO. Then assign values to the VertexBufferObject and IndexBuffer to return with getters
 }
 ObjLoader::~ObjLoader() {
 
 }
-
+std::ostream& operator<<(std::ostream& os, const std::vector<Vertex>& vv) {
+    for (size_t i = 0; i < vv.size(); i++) {
+        Vertex vertex = vv[i];
+        os << i << ": "
+            << "(" << vertex.position.x << "," << vertex.position.y << "," << vertex.position.z << ") "
+            << "(" << vertex.normal.x << "," << vertex.normal.y << "," << vertex.normal.z << ") "
+            << "(" << vertex.texcoord.x << "," << vertex.texcoord.y << ")\n";
+    }
+    return os;
+}

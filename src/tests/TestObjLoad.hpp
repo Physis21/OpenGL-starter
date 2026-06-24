@@ -17,6 +17,7 @@
 #include "VertexArray.hpp"
 #include "Texture.hpp"
 #include "Renderer.hpp"
+#include "ObjLoader.hpp"
 
 #include "tiny_obj_loader.h"
 

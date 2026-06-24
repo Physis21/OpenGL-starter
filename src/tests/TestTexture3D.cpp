@@ -66,10 +66,10 @@ namespace test {
         m_Shader->SetUniform1i("u_Texture", 0); // 0 because we bind the texture to slot 0
 
         /* Unbind buffers and program. Apparently this is uneeded now. TODO: read why */
-        // m_VAO->Unbind();
-        // m_VertexBuffer->Unbind();
-        // m_IndexBuffer->Unbind();
-        // m_Shader->Unbind();
+        m_VAO->Unbind();
+        m_VertexBuffer->Unbind();
+        m_IndexBuffer->Unbind();
+        m_Shader->Unbind();
 
     }
     TestTexture3D::~TestTexture3D() {
