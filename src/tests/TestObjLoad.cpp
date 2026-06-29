@@ -80,9 +80,8 @@ namespace test {
         m_Shader = std::make_unique<Shader>("res/shaders/TestObjLoad.shader");
         m_Shader->Bind();
 
-        // m_Texture = std::make_unique<Texture>("res/textures/TsukihimeLogo.png");
         std::cout << "texture to load: " << mtl_path + material.diffuse_texname << "\n";
-        m_Texture = std::make_unique<Texture>(mtl_path + material.diffuse_texname);
+        m_Texture = std::make_unique<Texture>(mtl_path + material.diffuse_texname, true);
         m_Shader->SetUniform1i("u_Texture", 0); // 0 because we bind the texture to slot 0
         /***********************************
          * Unbind buffers and programs
@@ -91,9 +90,11 @@ namespace test {
         m_VertexBuffer->Unbind();
         m_IndexBuffer->Unbind();
         m_Shader->Unbind();
+
+        glEnable(GL_DEPTH_TEST); // Enable Z-buffer!
     }
     TestObjLoad::~TestObjLoad() {
-
+        glDisable(GL_DEPTH_TEST); // Disable Z buffer for other tests
     }
 
     void TestObjLoad::OnUpdate(float deltatime) {
@@ -102,7 +103,8 @@ namespace test {
     void TestObjLoad::OnRender() {
         Renderer renderer;
         GLfloat clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        renderer.Clear(clearColor);
+        GLCall(glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]));
+        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); // Clear with Z buffer!
 
         m_Texture->Bind();
 

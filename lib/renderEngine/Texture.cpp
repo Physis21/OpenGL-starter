@@ -1,7 +1,7 @@
 #include "Texture.hpp"
 
-Texture::Texture(const std::string& path) 
-: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0){
+Texture::Texture(const std::string& path, bool filterNearest) 
+: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0), m_FilterNearest(filterNearest){
     /* In OpenGL, the bottom left is 0, 0
      * while in stb, the top left is 0, 0
      */
@@ -17,9 +17,11 @@ Texture::Texture(const std::string& path)
     /* NOTE: Without these 4 parameters, you will get a black texture */
 
     /* MIN_FILTER is how the texture is minimized, and GL_LINEAR means we lineary resample everything */
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GLuint filter;
+    if (filterNearest) {filter = GL_NEAREST;} else {filter = GL_LINEAR;}
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter));
     /* MAG_FILTER is how the texture is magnified */
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 

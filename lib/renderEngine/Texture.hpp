@@ -13,9 +13,10 @@ class Texture {
         std::string m_FilePath;
         unsigned char* m_LocalBuffer;
         int m_Width, m_Height, m_BPP; // BPP = bits per pixels
+        bool m_FilterNearest;
 
     public:
-        Texture(const std::string& path);
+        Texture(const std::string& path, bool filterNearest = false);
         ~Texture();
 
         void Bind(unsigned int slot = 0) const;

@@ -23,8 +23,19 @@ in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
 
+// Near and far could be taken as uniforms from code
+float near = 0.1f;
+float far = 20.0f;
+float linearizeDepth(float depth) {
+   return (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) *(far - near));
+}
+float logisticDepth(float depth, float steepness, float offset) {
+   float zVal = linearizeDepth(depth);
+   return (1 / (1 + exp(-steepness * (zVal - offset))));
+}
+
 void main() {
    vec4 texColor = texture(u_Texture, v_TexCoord);
-   // color = vec4(1.0, 0.0, 0.0, 1.0);
-   color = texColor;
+   float depth = logisticDepth(gl_FragCoord.z, 0.5, 5.0);
+   color = vec4(vec3(texColor * (1.0 - depth)), 1.0);
 };
