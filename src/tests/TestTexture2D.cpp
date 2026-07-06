@@ -65,7 +65,7 @@ namespace test {
 
     }
 
-    void TestTexture2D::OnUpdate(float deltatime) {
+    void TestTexture2D::OnUpdate(float deltatime, float display_w, float display_h) {
 
     }
     void TestTexture2D::OnRender() {

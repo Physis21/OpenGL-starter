@@ -29,8 +29,10 @@ uniform sampler2D u_Texture;
 uniform vec4 u_LightDirection;
 
 float phongSimple(vec4 lightDirection, vec4 normal) {
-   float lightFactor = max(dot(normal.xyz, -lightDirection.xyz), 0.0f);
-   return (lightFactor + 0.4) / 1.4;
+   vec3 n = normalize(normal.xyz);
+   vec3 ld = normalize(lightDirection.xyz);
+   float lightFactor = max(dot(n, -ld), 0.0f);
+   return (lightFactor + 0.1) / 1.1;
 }
 
 void main() {

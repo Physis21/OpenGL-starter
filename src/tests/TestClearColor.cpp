@@ -1,7 +1,4 @@
 #include "TestClearColor.hpp"
-#include "GLErrorManager.hpp"
-#include "glad.h"
-#include "imgui.h"
 
 namespace test {
 
@@ -13,7 +10,7 @@ namespace test {
 
     }
 
-    void TestClearColor::OnUpdate(float deltatime) {
+    void TestClearColor::OnUpdate(float deltatime, float display_w, float display_h) {
 
     }
     void TestClearColor::OnRender() {

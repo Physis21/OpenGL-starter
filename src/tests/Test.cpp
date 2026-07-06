@@ -1,4 +1,5 @@
 #include "Test.hpp"
+#include "imgui.h"
 
 namespace test {
     TestMenu::TestMenu(Test*& currentTestPointer)
@@ -9,7 +10,7 @@ namespace test {
 
     }
 
-    void TestMenu::OnUpdate(float deltaTime){
+    void TestMenu::OnUpdate(float deltaTime, float display_w, float display_h){
 
     }
     void TestMenu::OnRender(){
@@ -21,6 +22,8 @@ namespace test {
             if(ImGui::Button(test.first.c_str()))
                 m_CurrentTest = test.second();
         }
+        bool showDemoWindow = true;
+        ImGui::ShowDemoWindow(&showDemoWindow);
     }
 
 }

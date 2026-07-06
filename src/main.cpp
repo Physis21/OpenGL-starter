@@ -135,8 +135,11 @@ int main(int argc, char**argv){
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            int display_w, display_h;
+            glfwGetFramebufferSize(window, &display_w, &display_h);
+
             if (currentTest) {
-                currentTest->OnUpdate(0.0f);
+                currentTest->OnUpdate(0.0f, display_w, display_h);
                 currentTest->OnRender();
                 ImGui::Begin("Widgets");
                 if (currentTest != testMenu && ImGui::Button("<-")) {
@@ -149,8 +152,6 @@ int main(int argc, char**argv){
 
             // Rendering
             ImGui::Render();
-            int display_w, display_h;
-            glfwGetFramebufferSize(window, &display_w, &display_h);
             glViewport(0, 0, display_w, display_h);
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

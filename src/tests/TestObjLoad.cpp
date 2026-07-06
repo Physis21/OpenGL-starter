@@ -13,6 +13,7 @@
  */
 
 #include "TestObjLoad.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
 
 namespace test {
 
@@ -36,7 +37,7 @@ namespace test {
         m_XYRotationA{20.0f, 20.0f},
         m_XYRotationB{20.0f, 20.0f},
         m_ImGuiIO(ImGui::GetIO()),
-        m_LightDirection(glm::vec4(-0.2f, -1.0f, 0.0f, 1.0f))
+        m_LightDirection(glm::vec4(-0.0f, -1.0f, 0.0f, 1.0f))
     {
         (void) m_ImGuiIO; // Compiler unused warning suppresion trick
 
@@ -98,8 +99,30 @@ namespace test {
         glDisable(GL_DEPTH_TEST); // Disable Z buffer for other tests
     }
 
-    void TestObjLoad::OnUpdate(float deltatime) {
+    void TestObjLoad::OnUpdate(float deltatime, float display_w, float display_h) {
+        ImVec2 mousePos = ImGui::GetMousePos();
 
+        // NDC in [-1, 1]. Y flipped: screen Y grows downward, world Y grows upward.
+        float ndcX = (mousePos.x / display_w) * 2.0f - 1.0f;
+        float ndcY = 1.0f - (mousePos.y / display_h) * 2.0f;
+
+        // TODO: store these as members shared with m_Proj instead of duplicating magic numbers
+        const float aspect = 4.0f / 3.0f;
+        const float tanHalfFovy = glm::tan(glm::radians(45.0f) / 2.0f);
+
+        // Direction FROM an implied light source (mouse-controlled) TO the scene, in view space.
+        glm::vec3 lightDirView = glm::normalize(glm::vec3(
+            -ndcX * aspect * tanHalfFovy,
+            -ndcY * tanHalfFovy,
+            -1.0f
+        ));
+
+        // Rotate into world space: undo the view matrix's rotation component.
+        // Translation doesn't apply to directions, hence mat3 (drops the translation column/row).
+        glm::mat3 viewToWorld = glm::inverse(glm::mat3(m_View));
+        glm::vec3 lightDirWorld = viewToWorld * lightDirView;
+
+        m_LightDirection = glm::vec4(lightDirWorld, 0.0f);
     }
     void TestObjLoad::OnRender() {
         Renderer renderer;
@@ -112,23 +135,25 @@ namespace test {
         // Here we have redundant Shader bindings. In actual game engines, a caching system would be implemented to prevent this.
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationA);
-            model = glm::rotate(model, glm::radians(m_XYRotationA.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(m_XYRotationA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(m_XYRotationA.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            rotation = glm::rotate(rotation, glm::radians(m_XYRotationA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = model * rotation;
             glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
-            m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniformMat4f("u_Model", rotation);
             m_Shader->SetUniform4f("u_LightDirection", m_LightDirection[0], m_LightDirection[1], m_LightDirection[2], m_LightDirection[3]);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB);
-            model = glm::rotate(model, glm::radians(m_XYRotationB.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(m_XYRotationB.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(m_XYRotationB.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            rotation = glm::rotate(rotation, glm::radians(m_XYRotationB.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = model * rotation;
             glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
-            m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniformMat4f("u_Model", rotation);
             m_Shader->SetUniform4f("u_LightDirection", m_LightDirection[0], m_LightDirection[1], m_LightDirection[2], m_LightDirection[3]);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
@@ -139,9 +164,9 @@ namespace test {
         float maxZ = 20.0f;
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
-            static int counter = 0;
-
             ImGui::Begin("My GUI window!");                          // Create a window called "Hello, world!" and append into it.
+
+            ImGui::Text("Current light direction: %.2f, %.2f", m_LightDirection[0], m_LightDirection[1]);
 
             ImGui::Text("Object A transformations");
             ImGui::SliderFloat2("translationA x&y", &m_TranslationA.x, -maxXOrY, maxXOrY);

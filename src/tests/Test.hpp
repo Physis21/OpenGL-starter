@@ -20,7 +20,7 @@ namespace test {
             
             // Not pure virtual so that we don't **have** to implement them
             
-            virtual void OnUpdate(float deltaTime) {}
+            virtual void OnUpdate(float deltaTime, float display_w, float display_h) {}
             virtual void OnRender() {}
             virtual void OnImGuiRender() {}
 
@@ -31,7 +31,7 @@ namespace test {
             TestMenu(Test*& currentTestPointer);
             virtual ~TestMenu();
 
-            virtual void OnUpdate(float deltaTime) override;
+            virtual void OnUpdate(float deltaTime, float display_w, float display_h) override;
             virtual void OnRender() override;
             virtual void OnImGuiRender() override;
 

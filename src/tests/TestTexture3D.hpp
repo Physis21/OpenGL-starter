@@ -28,7 +28,7 @@ namespace test {
             TestTexture3D();
             ~TestTexture3D();
 
-            void OnUpdate(float deltatime) override;
+            void OnUpdate(float deltatime, float display_w, float display_h) override;
             void OnRender() override;
             void OnImGuiRender() override;
 

@@ -76,7 +76,7 @@ namespace test {
 
     }
 
-    void TestTexture3D::OnUpdate(float deltatime) {
+    void TestTexture3D::OnUpdate(float deltatime, float display_w, float display_h) {
 
     }
     void TestTexture3D::OnRender() {

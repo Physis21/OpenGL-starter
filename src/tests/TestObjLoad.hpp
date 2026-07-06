@@ -32,7 +32,7 @@ namespace test {
             TestObjLoad();
             ~TestObjLoad();
 
-            void OnUpdate(float deltatime) override;
+            void OnUpdate(float deltatime, float display_w, float display_h) override;
             void OnRender() override;
             void OnImGuiRender() override;
 
