@@ -35,7 +35,8 @@ namespace test {
         m_TranslationB(2, 0, -5.0f),
         m_XYRotationA{20.0f, 20.0f},
         m_XYRotationB{20.0f, 20.0f},
-        m_ImGuiIO(ImGui::GetIO())
+        m_ImGuiIO(ImGui::GetIO()),
+        m_LightDirection(glm::vec4(-0.2f, -1.0f, 0.0f, 1.0f))
     {
         (void) m_ImGuiIO; // Compiler unused warning suppresion trick
 
@@ -77,7 +78,7 @@ namespace test {
 
         /* EndTest out iteration */
 
-        m_Shader = std::make_unique<Shader>("res/shaders/TestObjLoad.shader");
+        m_Shader = std::make_unique<Shader>("res/shaders/ObjWithText.shader");
         m_Shader->Bind();
 
         std::cout << "texture to load: " << mtl_path + material.diffuse_texname << "\n";
@@ -102,7 +103,7 @@ namespace test {
     }
     void TestObjLoad::OnRender() {
         Renderer renderer;
-        GLfloat clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        GLfloat clearColor[4] = {0.1f, 0.0f, 0.0f, 0.0f};
         GLCall(glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]));
         GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); // Clear with Z buffer!
 
@@ -116,6 +117,8 @@ namespace test {
             glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniform4f("u_LightDirection", m_LightDirection[0], m_LightDirection[1], m_LightDirection[2], m_LightDirection[3]);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
         {
@@ -125,6 +128,8 @@ namespace test {
             glm::mat4 mvp = m_Proj * m_View * model; // In OpenGL, projection is proj * model * view due to column major
             m_Shader->Bind();
             m_Shader->SetUniformMat4f("u_MVP", mvp);
+            m_Shader->SetUniformMat4f("u_Model", model);
+            m_Shader->SetUniform4f("u_LightDirection", m_LightDirection[0], m_LightDirection[1], m_LightDirection[2], m_LightDirection[3]);
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
 

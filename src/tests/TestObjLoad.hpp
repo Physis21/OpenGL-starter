@@ -51,6 +51,7 @@ namespace test {
             XYRotation m_XYRotationA, m_XYRotationB;
 
             ImGuiIO& m_ImGuiIO;
+            glm::vec4 m_LightDirection;
     };
 
 }

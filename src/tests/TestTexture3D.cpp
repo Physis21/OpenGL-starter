@@ -17,8 +17,8 @@ namespace test {
             glm::vec3(0.0f, 0.0f, -1.0f), // Looking down the Z axis
             glm::vec3(0.0f, 1.0f, 0.0f) // up direction
         )), // In this particular case, `lookAt()` produces the identity matrix.
-        m_TranslationA(0, 0, -100.0f), 
-        m_TranslationB(150, 0, -100.0f),
+        m_TranslationA(0, 0, -400.0f), 
+        m_TranslationB(150, 0, -380.0f),
         m_XYRotationA{0.0f, 0.0f},
         m_XYRotationB{0.0f, 0.0f},
         m_ClearColor{0.0f, 0.0f, 0.0f, 1.00f},

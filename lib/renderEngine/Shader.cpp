@@ -29,18 +29,22 @@ void Shader::SetUniform1f(const std::string& name, float value) {
     GLCall(glUniform1f(GetUniformLocation(name), value));
 }
 
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2) {
+    GLCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+}
+
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
     GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+}
+
+void Shader::SetUniformMat3f(const std::string& name, const glm::mat3& matrix) {
+    GLCall(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
 void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix) {
     // Provide 1 matrix, glm stores in column order so no need to transpose,
     // and pass pointer to array using first element
     GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
-}
-
-void Shader::SetUniformMat3f(const std::string& name, const glm::mat3& matrix) {
-    GLCall(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
@@ -71,23 +75,23 @@ ShaderProgramSource Shader::ParseShader(const std::string& filepath) {
 unsigned int Shader::CompileShader(unsigned int shaderType, const std::string& source) {
     unsigned int id = glCreateShader(shaderType);
     const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
+    GLCall(glShaderSource(id, 1, &src, nullptr));
+    GLCall(glCompileShader(id));
 
     int compile_result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &compile_result);
+    GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &compile_result));
     if (compile_result == GL_FALSE) {
         int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
         // alloca allows for creation of arbitrary-size string on stack!
         char* message = (char*) alloca(length * sizeof(char));
-        glGetShaderInfoLog(id, length, &length, message);
+        GLCall(glGetShaderInfoLog(id, length, &length, message));
         std::cerr
             << "Failed to compile "
             << (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")
             << " shader!\n";
         std::cerr << message << std::endl;
-        glDeleteShader(id);
+        GLCall(glDeleteShader(id));
         return 0;
     }
 
@@ -99,16 +103,16 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    glValidateProgram(program);
+    GLCall(glAttachShader(program, vs));
+    GLCall(glAttachShader(program, fs));
+    GLCall(glLinkProgram(program));
+    GLCall(glValidateProgram(program));
 
-    glDetachShader(program, vs);
-    glDetachShader(program, fs);
+    GLCall(glDetachShader(program, vs));
+    GLCall(glDetachShader(program, fs));
 
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    GLCall(glDeleteShader(vs));
+    GLCall(glDeleteShader(fs));
 
     return program;
 }

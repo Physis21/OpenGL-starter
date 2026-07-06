@@ -94,7 +94,7 @@ int main(int argc, char**argv){
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use FreeType for higher quality font rendering.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     // - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
-    //style.FontSizeBase = 20.0f;
+    style.FontSizeBase = 20.0f;
     //io.Fonts->AddFontDefaultVector();
     //io.Fonts->AddFontDefaultBitmap();
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
@@ -138,7 +138,7 @@ int main(int argc, char**argv){
             if (currentTest) {
                 currentTest->OnUpdate(0.0f);
                 currentTest->OnRender();
-                ImGui::Begin("Test");
+                ImGui::Begin("Widgets");
                 if (currentTest != testMenu && ImGui::Button("<-")) {
                     delete currentTest; // Call destructor to clean up
                     currentTest = testMenu;
