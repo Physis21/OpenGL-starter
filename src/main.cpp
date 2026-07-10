@@ -45,7 +45,9 @@ int main(int argc, char**argv){
         return -1;
     }
     glfwMakeContextCurrent(window); // Create the OpenGL context
-    glfwSwapInterval(1); // Limit framerate (vsync)
+
+    // Disable vsync when manually controlling FPS
+    // glfwSwapInterval(1); // Limit framerate to match monitor (vsync)
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Couldn't open OpenGL" << std::endl;
@@ -104,6 +106,12 @@ int main(int argc, char**argv){
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
+    // FPS limiting
+    constexpr float TARGET_FPS = 60.0f;
+    constexpr float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
+    float lastRenderTime = (float)glfwGetTime();
+    float currentTime;
+    float deltaTime;
 
     /* Create a scope to call destructors of objects before the glfw termination deletes the OpenGL context */
     {
@@ -118,12 +126,25 @@ int main(int argc, char**argv){
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
+            currentTime = (float)glfwGetTime();
+            // Always provess input for responsiveness
+            if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+                glfwSetWindowShouldClose(window, true);
+    
+
+            // Check if enough time has passed for rendering
             // Poll and handle events (inputs, window resize, etc.)
             // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
             // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
             // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
             // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-            glfwPollEvents();
+            if (currentTime - lastRenderTime < TARGET_FRAME_TIME) {
+                glfwPollEvents();
+                continue;
+            }
+
+            deltaTime = currentTime - lastRenderTime;
+            lastRenderTime = currentTime;
             if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
             {
                 ImGui_ImplGlfw_Sleep(10);
@@ -139,9 +160,9 @@ int main(int argc, char**argv){
             glfwGetFramebufferSize(window, &display_w, &display_h);
 
             if (currentTest) {
-                currentTest->OnUpdate(0.0f, display_w, display_h);
+                currentTest->OnUpdate(lastRenderTime, display_w, display_h);
                 currentTest->OnRender();
-                ImGui::Begin("Widgets");
+                ImGui::Begin("Main menu");
                 if (currentTest != testMenu && ImGui::Button("<-")) {
                     delete currentTest; // Call destructor to clean up
                     currentTest = testMenu;
@@ -167,6 +188,7 @@ int main(int argc, char**argv){
             }
 
             glfwSwapBuffers(window);
+            glfwPollEvents(); // Call again for input responsiveness
         }
 
         // Cleanup

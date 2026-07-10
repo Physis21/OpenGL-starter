@@ -25,8 +25,16 @@ Texture::Texture(const std::string& path, bool filterNearest)
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
+    // Tell OpenGL how to repeat the texture for values > +-1, for axises S and T
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+
     // Pass the image data to OpenGl
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+
+    // Generate mipmaps which are smaller resolution versions of the texture when it is far away
+    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+
     // Unbind the texture
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 

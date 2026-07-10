@@ -100,7 +100,7 @@ namespace test {
     }
 
     void TestObjLoad::OnUpdate(float deltatime, float display_w, float display_h) {
-        ImVec2 mousePos = ImGui::GetMousePos();
+        ImVec2 mousePos = ImGui::GetMousePos(); // Ideally, inputs should not come from GLFW or ImGUI but input to function?
 
         // NDC in [-1, 1]. Y flipped: screen Y grows downward, world Y grows upward.
         float ndcX = (mousePos.x / display_w) * 2.0f - 1.0f;
@@ -164,7 +164,7 @@ namespace test {
         float maxZ = 20.0f;
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
-            ImGui::Begin("My GUI window!");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("My GUI window!");
 
             ImGui::Text("Current light direction: %.2f, %.2f", m_LightDirection[0], m_LightDirection[1]);
 

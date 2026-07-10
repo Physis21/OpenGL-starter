@@ -20,6 +20,9 @@ namespace test {
             
             // Not pure virtual so that we don't **have** to implement them
             
+            /*
+             * @param[in] deltaTime the elapsed time (seconds) since the last frame.
+             */
             virtual void OnUpdate(float deltaTime, float display_w, float display_h) {}
             virtual void OnRender() {}
             virtual void OnImGuiRender() {}
