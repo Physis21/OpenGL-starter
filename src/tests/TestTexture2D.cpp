@@ -2,7 +2,7 @@
 
 namespace test {
 
-    TestTexture2D::TestTexture2D() 
+    TestTexture2D::TestTexture2D(GLFWwindow* window) 
     : 
         // glm::ortho simply drops the Z coordinate, and lines stay parallel. Objects look the same regardless of depth.
         m_Proj(glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, -240.0f, 240.0f)),
@@ -65,7 +65,7 @@ namespace test {
 
     }
 
-    void TestTexture2D::OnUpdate(float deltatime, float display_w, float display_h) {
+    void TestTexture2D::OnUpdate(float deltatime, GLFWwindow* window) {
 
     }
     void TestTexture2D::OnRender() {

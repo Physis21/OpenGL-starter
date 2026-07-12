@@ -29,10 +29,10 @@ namespace test {
             float y;
         };
         public:
-            TestObjLoad();
+            TestObjLoad(GLFWwindow* window);
             ~TestObjLoad();
 
-            void OnUpdate(float deltatime, float display_w, float display_h) override;
+            void OnUpdate(float deltatime, GLFWwindow* window) override;
             void OnRender() override;
             void OnImGuiRender() override;
 

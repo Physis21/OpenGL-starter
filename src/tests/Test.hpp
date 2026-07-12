@@ -5,9 +5,10 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include "glad.h"
+#include <GLFW/glfw3.h>
 
 #include "imgui.h"
-#include "glad.h"
 
 #include "GLErrorManager.hpp"
 
@@ -22,8 +23,9 @@ namespace test {
             
             /*
              * @param[in] deltaTime the elapsed time (seconds) since the last frame.
+             * @param[inout] window the GLFW window pointer
              */
-            virtual void OnUpdate(float deltaTime, float display_w, float display_h) {}
+            virtual void OnUpdate(float deltaTime, GLFWwindow* window) {}
             virtual void OnRender() {}
             virtual void OnImGuiRender() {}
 
@@ -34,14 +36,14 @@ namespace test {
             TestMenu(Test*& currentTestPointer);
             virtual ~TestMenu();
 
-            virtual void OnUpdate(float deltaTime, float display_w, float display_h) override;
+            virtual void OnUpdate(float deltaTime, GLFWwindow* window) override;
             virtual void OnRender() override;
             virtual void OnImGuiRender() override;
 
             template<typename T>
-            void RegisterTest(const std::string& name) {
+            void RegisterTest(const std::string& name, GLFWwindow* window) {
                 std::cout << "Registering test " << name << std::endl;
-                m_Tests.push_back(std::make_pair(name, []() {return new T();}));
+                m_Tests.push_back(std::make_pair(name, [window]() {return new T(window);}));
             }
 
         private:

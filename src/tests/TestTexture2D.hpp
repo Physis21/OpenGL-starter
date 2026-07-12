@@ -21,10 +21,10 @@ namespace test {
 
     class TestTexture2D: public Test {
         public:
-            TestTexture2D();
+            TestTexture2D(GLFWwindow* window);
             ~TestTexture2D();
 
-            void OnUpdate(float deltatime, float display_w, float display_h) override;
+            void OnUpdate(float deltatime, GLFWwindow* window) override;
             void OnRender() override;
             void OnImGuiRender() override;
 

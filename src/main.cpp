@@ -119,10 +119,11 @@ int main(int argc, char**argv){
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
         currentTest = testMenu;
 
-        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
-        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
-        testMenu->RegisterTest<test::TestTexture3D>("3D Texture");
-        testMenu->RegisterTest<test::TestObjLoad>("OBJ file loading");
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color", window);
+        testMenu->RegisterTest<test::TestTexture2D>("2D Texture", window);
+        testMenu->RegisterTest<test::TestTexture3D>("3D Texture", window);
+        testMenu->RegisterTest<test::TestObjLoad>("OBJ file loading", window);
+        testMenu->RegisterTest<test::TestCamera>("Camera from LearnOpenGL", window);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -156,11 +157,8 @@ int main(int argc, char**argv){
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            int display_w, display_h;
-            glfwGetFramebufferSize(window, &display_w, &display_h);
-
             if (currentTest) {
-                currentTest->OnUpdate(lastRenderTime, display_w, display_h);
+                currentTest->OnUpdate(lastRenderTime, window);
                 currentTest->OnRender();
                 ImGui::Begin("Main menu");
                 if (currentTest != testMenu && ImGui::Button("<-")) {
@@ -172,6 +170,8 @@ int main(int argc, char**argv){
             }
 
             // Rendering
+            int display_w, display_h;
+            glfwGetFramebufferSize(window, &display_w, &display_h);
             ImGui::Render();
             glViewport(0, 0, display_w, display_h);
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

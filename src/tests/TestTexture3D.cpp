@@ -2,7 +2,7 @@
 
 namespace test {
 
-    TestTexture3D::TestTexture3D() 
+    TestTexture3D::TestTexture3D(GLFWwindow* window) 
     : 
         // glm::perspective divides X and Y by Z (perspective divide).
         m_Proj(glm::perspective(
@@ -76,7 +76,7 @@ namespace test {
 
     }
 
-    void TestTexture3D::OnUpdate(float deltatime, float display_w, float display_h) {
+    void TestTexture3D::OnUpdate(float deltatime, GLFWwindow* window) {
 
     }
     void TestTexture3D::OnRender() {

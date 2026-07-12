@@ -1,2 +1,7 @@
 CompileFlags:
   CompilationDatabase: build
+If:
+  PathMatch: .*\.(h|hpp)$
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None

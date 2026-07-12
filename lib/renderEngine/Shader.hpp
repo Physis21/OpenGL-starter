@@ -28,6 +28,8 @@ class Shader {
         Shader(const std::string& filepath);
         ~Shader();
 
+        unsigned int GetRendererID() const;
+
         void Bind() const;
         void Unbind() const;
     

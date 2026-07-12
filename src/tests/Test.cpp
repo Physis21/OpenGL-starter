@@ -10,7 +10,7 @@ namespace test {
 
     }
 
-    void TestMenu::OnUpdate(float deltaTime, float display_w, float display_h){
+    void TestMenu::OnUpdate(float deltaTime, GLFWwindow* window){
 
     }
     void TestMenu::OnRender(){

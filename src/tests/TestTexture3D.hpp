@@ -25,10 +25,10 @@ namespace test {
             float y;
         };
         public:
-            TestTexture3D();
+            TestTexture3D(GLFWwindow* window);
             ~TestTexture3D();
 
-            void OnUpdate(float deltatime, float display_w, float display_h) override;
+            void OnUpdate(float deltatime, GLFWwindow* window) override;
             void OnRender() override;
             void OnImGuiRender() override;
 

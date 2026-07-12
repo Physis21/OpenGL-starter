@@ -1,6 +1,4 @@
 #include "Renderer.hpp"
-#include "GLErrorManager.hpp"
-#include "glad.h"
 
 void Renderer::Clear(GLfloat color[4]) const{
     GLCall(glClearColor(color[0], color[1], color[2], color[3]));

@@ -14,6 +14,10 @@ Shader::~Shader() {
     GLCall(glDeleteProgram(m_RendererID));
 }
 
+unsigned int Shader::GetRendererID() const {
+    return m_RendererID;    
+}
+
 void Shader::Bind() const{
     GLCall(glUseProgram(m_RendererID));
 }
@@ -117,6 +121,9 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
     return program;
 }
 
+/* Get location of the uniform by name, by looking in the
+* `m_UniformLocationCache`. If it is in, then return it, and else
+*/
 GLint Shader::GetUniformLocation(const std::string& name) const {
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
         // Value is in the cache

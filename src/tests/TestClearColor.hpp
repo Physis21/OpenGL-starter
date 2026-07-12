@@ -9,10 +9,10 @@ namespace test {
 
     class TestClearColor: public Test {
         public:
-            TestClearColor();
+            TestClearColor(GLFWwindow* window);
             ~TestClearColor();
 
-            void OnUpdate(float deltatime, float display_w, float display_h) override;
+            void OnUpdate(float deltatime, GLFWwindow* window) override;
             void OnRender() override;
             void OnImGuiRender() override;
 

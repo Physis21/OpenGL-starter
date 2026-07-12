@@ -17,7 +17,7 @@
 
 namespace test {
 
-    TestObjLoad::TestObjLoad() 
+    TestObjLoad::TestObjLoad(GLFWwindow* window) 
     : 
         // glm::perspective divides X and Y by Z (perspective divide).
         m_Proj(glm::perspective(
@@ -99,12 +99,17 @@ namespace test {
         glDisable(GL_DEPTH_TEST); // Disable Z buffer for other tests
     }
 
-    void TestObjLoad::OnUpdate(float deltatime, float display_w, float display_h) {
-        ImVec2 mousePos = ImGui::GetMousePos(); // Ideally, inputs should not come from GLFW or ImGUI but input to function?
+    void TestObjLoad::OnUpdate(float deltatime, GLFWwindow* window) {
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+		double mouseX;
+		double mouseY;
+		// Fetches the coordinates of the cursor
+		glfwGetCursorPos(window, &mouseX, &mouseY);
 
         // NDC in [-1, 1]. Y flipped: screen Y grows downward, world Y grows upward.
-        float ndcX = (mousePos.x / display_w) * 2.0f - 1.0f;
-        float ndcY = 1.0f - (mousePos.y / display_h) * 2.0f;
+        float ndcX = (mouseX / display_w) * 2.0f - 1.0f;
+        float ndcY = 1.0f - (mouseY / display_h) * 2.0f;
 
         // TODO: store these as members shared with m_Proj instead of duplicating magic numbers
         const float aspect = 4.0f / 3.0f;

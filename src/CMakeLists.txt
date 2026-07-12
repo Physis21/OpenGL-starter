@@ -9,6 +9,7 @@ target_sources(OpenGL-starter
         tests/TestTexture2D.cpp
         tests/TestTexture3D.cpp
         tests/TestObjLoad.cpp
+        tests/TestCamera.cpp
     PRIVATE FILE_SET HEADERS FILES
         main.hpp
         tests/Test.hpp
@@ -16,6 +17,7 @@ target_sources(OpenGL-starter
         tests/TestTexture2D.hpp
         tests/TestTexture3D.hpp
         tests/TestObjLoad.hpp
+        tests/TestCamera.hpp
 )
 target_link_libraries(OpenGL-starter
     PRIVATE
