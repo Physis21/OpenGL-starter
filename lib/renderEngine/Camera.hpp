@@ -15,7 +15,9 @@
 class Camera {
     private:
         glm::vec3 m_Position;
+        // Current orientation
         glm::vec3 m_Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
+        glm::vec3 m_OrientationBeforePress = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
         int m_Width;
         int m_Height;
@@ -23,11 +25,13 @@ class Camera {
         float m_Sensitivity = 100.0f;
         // Prevents the camera from jumping around when first clicking left click
         bool m_FirstClick = true;
+        double m_MouseX, m_MouseY;
     public:
         Camera(int width, int height, glm::vec3 position);
 
         void SetWidth(int width);
         void SetHeight(int height);
+        glm::vec3 GetOrientation() const;
 
         void Matrix(float fovDeg, float nearPlane, float farPlane, const Shader& shader, const char* uniform);
         void Inputs(GLFWwindow* window);

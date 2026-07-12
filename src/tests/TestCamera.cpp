@@ -60,7 +60,7 @@ namespace test {
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         /* Create Camera using current display port */
-        m_Camera = std::make_unique<Camera>(display_w, display_h, glm::vec3(0.0f, 0.0f, 0.2f));
+        m_Camera = std::make_unique<Camera>(display_w, display_h, glm::vec3(0.0f, 0.5, 2.0f));
 
         /***********************************
          * Unbind buffers and programs
@@ -82,7 +82,10 @@ namespace test {
         m_Camera->SetHeight(display_w);
         m_Camera->SetHeight(display_h);
         // Handles camera inputs
-        m_Camera->Inputs(window);
+        
+        if (!m_ImGuiIO.WantCaptureMouse) {
+            m_Camera->Inputs(window);
+        }
     }
     void TestCamera::OnRender() {
         Renderer renderer;
@@ -105,8 +108,14 @@ namespace test {
     void TestCamera::OnImGuiRender() {
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
+            glm::vec3 cameraOrientation = m_Camera->GetOrientation();
             ImGui::Begin("My GUI window!");
-            ImGui::Text("Here user input is handled by GLFW in the `Camera` class.");
+            ImGui::TextWrapped("Here user input is handled by GLFW in the `Camera` class.\n"
+                    "Currently, all camera inputs are disabled when hovering ImGUI windows.");
+            ImGui::TextWrapped("Current Camera orientation: (%.2f , %.2f, %.2f)",
+                    cameraOrientation[0],
+                    cameraOrientation[1],
+                    cameraOrientation[2]);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_ImGuiIO.Framerate, m_ImGuiIO.Framerate);
             ImGui::End();
         }
