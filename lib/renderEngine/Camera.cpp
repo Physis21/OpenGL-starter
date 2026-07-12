@@ -16,15 +16,21 @@ glm::vec3 Camera::GetOrientation() const {
     return m_Orientation;
 }
 
-void Camera::Matrix(float fovDeg, float nearPlane, float farPlane, const Shader& shader, const char* uniform) {
+glm::vec3 Camera::GetPosition() const {
+    return m_Position;
+}
+
+void Camera::UpdateMatrix(const float fovDeg, const float nearPlane, const float farPlane) {
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
 
     view = glm::lookAt(m_Position, m_Position + m_Orientation, m_Up);
     projection = glm::perspective(glm::radians(fovDeg), (float)m_Width / (float)m_Height, nearPlane, farPlane);
+    m_CameraMatrix = projection * view;
+}
 
-    // Exports the camera matrix to the Vertex Shader
-    glUniformMatrix4fv(glGetUniformLocation(shader.GetRendererID(), uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+void Camera::Matrix(const Shader& shader, const char* uniform) {
+    glUniformMatrix4fv(glGetUniformLocation(shader.GetRendererID(), uniform), 1, GL_FALSE, glm::value_ptr(m_CameraMatrix));
 }
 
 void Camera::Inputs(GLFWwindow* window) {
@@ -87,9 +93,9 @@ void Camera::Inputs(GLFWwindow* window) {
 	// and then "transforms" them into degrees 
 	float rotX = m_Sensitivity * (float)(mouseYAfterPress - m_MouseY) / m_Height;
 	float rotY = m_Sensitivity * (float)(mouseXAfterPress - m_MouseX) / m_Width;
-	std::cout << "m_MouseY = " << m_MouseY << ", m_MouseX = " << m_MouseX << "\n";
-	std::cout << "mouseYAfterPress = " << mouseYAfterPress << ", mouseXAfterPress = " << mouseXAfterPress << "\n";
-	std::cout << "rotX = " << rotX << ", rotY = " << rotY << "\n";
+	// std::cout << "m_MouseY = " << m_MouseY << ", m_MouseX = " << m_MouseX << "\n";
+	// std::cout << "mouseYAfterPress = " << mouseYAfterPress << ", mouseXAfterPress = " << mouseXAfterPress << "\n";
+	// std::cout << "rotX = " << rotX << ", rotY = " << rotY << "\n";
 
 	// Calculates upcoming vertical change in the m_Orientation
 	glm::vec3 newOrientation = glm::rotate(m_OrientationBeforePress, glm::radians(-rotX), glm::normalize(glm::cross(m_OrientationBeforePress, m_Up)));

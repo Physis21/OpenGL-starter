@@ -19,9 +19,6 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 
-#include "tiny_obj_loader.h"
-
-
 namespace test {
     class TestCamera: public Test {
         public:

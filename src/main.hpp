@@ -29,3 +29,4 @@
 #include "tests/TestTexture3D.hpp"
 #include "tests/TestObjLoad.hpp"
 #include "tests/TestCamera.hpp"
+#include "tests/TestLighting.hpp"

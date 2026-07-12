@@ -124,6 +124,7 @@ int main(int argc, char**argv){
         testMenu->RegisterTest<test::TestTexture3D>("3D Texture", window);
         testMenu->RegisterTest<test::TestObjLoad>("OBJ file loading", window);
         testMenu->RegisterTest<test::TestCamera>("Camera from LearnOpenGL", window);
+        testMenu->RegisterTest<test::TestLighting>("Lighting from LearnOpenGL", window);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

@@ -19,6 +19,8 @@ class Camera {
         glm::vec3 m_Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 m_OrientationBeforePress = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::mat4 m_CameraMatrix = glm::mat4(1.0f);
+
         int m_Width;
         int m_Height;
         float m_Speed = 0.1f;
@@ -32,7 +34,13 @@ class Camera {
         void SetWidth(int width);
         void SetHeight(int height);
         glm::vec3 GetOrientation() const;
+        glm::vec3 GetPosition() const;
 
-        void Matrix(float fovDeg, float nearPlane, float farPlane, const Shader& shader, const char* uniform);
+        /* Update Camera matrix with the current camera position, orientation and up directions.
+         */
+        void UpdateMatrix(const float fovDeg, const float nearPlane, const float farPlane);
+        /* Export the camera matrix to the specified vertex shader
+         */
+        void Matrix(const Shader& shader, const char* uniform);
         void Inputs(GLFWwindow* window);
 };

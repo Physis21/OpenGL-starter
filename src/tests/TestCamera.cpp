@@ -21,9 +21,9 @@ namespace test {
         /* Test out iteration over the single shape. */
         // Layout, VB, VAO init
         VertexBufferLayout layout;
-        layout.Push<tinyobj::real_t>(3); // Coords
-        layout.Push<tinyobj::real_t>(3); // Color
-        layout.Push<tinyobj::real_t>(2); // TexCoord
+        layout.Push<float>(3); // Coords
+        layout.Push<float>(3); // Color
+        layout.Push<float>(2); // TexCoord
         m_VAO = std::make_unique<VertexArray>();
 
         std::array<GLfloat, 40> vertices =
@@ -99,7 +99,8 @@ namespace test {
             m_Shader->Bind();
             m_Texture->Bind();
             // Updates and exports the camera matrix to the Vertex Shader
-            m_Camera->Matrix(45.0f, 0.1f, 100.0f, *m_Shader, "u_CamMatrix");
+            m_Camera->UpdateMatrix(45.0f, 0.1f, 100.0f);
+            m_Camera->Matrix(*m_Shader, "u_CamMatrix");
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
