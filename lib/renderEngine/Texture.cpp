@@ -1,14 +1,15 @@
 #include "Texture.hpp"
 
-Texture::Texture(const std::string& path, bool filterNearest) 
+Texture::Texture(const std::string& path, bool filterNearest, GLint format) 
 : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0), m_FilterNearest(filterNearest){
     /* In OpenGL, the bottom left is 0, 0
      * while in stb, the top left is 0, 0
      */
     stbi_set_flip_vertically_on_load(1);
     /* stbi_load writes the width and height to m_Width and m_Height, usign their references
-     * 4 desired channels for RGBA */
-    m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+     * if wanted to force 4 channels for RGBA, set 4 as the last parameter.
+     * Else, set 0 so that stbi adapts to the image. */
+    m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 0);
 
     /* Generate and bind texture, and store its ID in m_RendererID */
     GLCall(glGenTextures(1, &m_RendererID));
@@ -30,7 +31,7 @@ Texture::Texture(const std::string& path, bool filterNearest)
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
     // Pass the image data to OpenGl
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_LocalBuffer));
 
     // Generate mipmaps which are smaller resolution versions of the texture when it is far away
     GLCall(glGenerateMipmap(GL_TEXTURE_2D));

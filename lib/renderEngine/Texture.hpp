@@ -4,7 +4,6 @@
 #include "GLErrorManager.hpp"
 #include "glad.h"
 #include "stb_image.h"
-// TODO: why do I need to add stb_image as a dependency of main.cpp?
 
 class Texture {
 
@@ -16,7 +15,7 @@ class Texture {
         bool m_FilterNearest;
 
     public:
-        Texture(const std::string& path, bool filterNearest = false);
+        Texture(const std::string& path, bool filterNearest = false, GLint format = GL_RGBA);
         ~Texture();
 
         void Bind(unsigned int slot = 0) const;

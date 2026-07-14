@@ -68,7 +68,7 @@ namespace test {
         glm::mat4 pyramidModel = glm::mat4(1.0f);
         pyramidModel = glm::translate(pyramidModel, pyramidPos);
 
-        m_Shader = std::make_unique<Shader>("res/shaders/TestLighting.shader");
+        m_Shader = std::make_unique<Shader>("res/shaders/TestLighting/Pyramid.shader");
         m_Shader->Bind();
         m_Texture = std::make_unique<Texture>("res/textures/brick.png", true);
         m_Shader->SetUniform1i("u_Tex0", 0); // 0 because we bind the texture to slot 0
@@ -114,7 +114,7 @@ namespace test {
         glm::mat4 lightModel = glm::mat4(1.0f);
         lightModel = glm::translate(lightModel, lightPos);
 
-        m_ShaderCube = std::make_unique<Shader>("res/shaders/TestLightingCube.shader");
+        m_ShaderCube = std::make_unique<Shader>("res/shaders/TestLighting/Cube.shader");
         m_ShaderCube->Bind();
         m_ShaderCube->SetUniformMat4f("u_Model", lightModel);
         m_ShaderCube->SetUniform4f("u_LightColor", lightColor.x, lightColor.y, lightColor.z, lightColor.w);

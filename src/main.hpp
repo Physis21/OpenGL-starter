@@ -30,3 +30,4 @@
 #include "tests/TestObjLoad.hpp"
 #include "tests/TestCamera.hpp"
 #include "tests/TestLighting.hpp"
+#include "tests/TestSpecMap.hpp"
