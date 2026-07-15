@@ -30,6 +30,7 @@ target_sources(RenderEngine
 
 target_link_libraries(RenderEngine
     glad
+    glfw
     stb_image
     glm::glm
     tinyobjloader
