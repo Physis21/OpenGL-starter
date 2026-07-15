@@ -66,6 +66,8 @@ uniform vec4 u_LightColor;
 uniform vec3 u_LightPos;
 // Gets the position of the camera from the main function
 uniform vec3 u_CamPos;
+// Gets the choice of shader to use
+uniform uint u_ShaderChoice;
 
 vec4 pointLight() {
 	vec3 lightVec = u_LightPos - v_CrntPos;
@@ -153,7 +155,11 @@ vec4 spotLight() {
 void main()
 {
 	// outputs final color
-	// FragColor = pointLight();
-	// FragColor = directLight();
-	FragColor = spotLight();
+	if (u_ShaderChoice == 0u) {
+	  FragColor = pointLight();
+	} else if (u_ShaderChoice == 1u) {
+		FragColor = directLight();
+	} else {
+		FragColor = spotLight();
+	}
 }

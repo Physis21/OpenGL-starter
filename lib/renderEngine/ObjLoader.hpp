@@ -5,6 +5,7 @@
 #include "glm/ext/vector_float2.hpp"
 #include "tiny_obj_loader.h"
 
+#include "VertexStruct.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
@@ -20,13 +21,6 @@ struct IndexEqual {
     bool operator()(const tinyobj::index_t& a, const tinyobj::index_t& b) const;
 };
 
-
-// Defines all the necessary data for a vertex element in the VAO
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texcoord;
-};
 
 class ObjLoader {
     public:

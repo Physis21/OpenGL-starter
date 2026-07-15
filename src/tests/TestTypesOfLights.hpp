@@ -37,6 +37,7 @@ namespace test {
             std::unique_ptr<Shader> m_Shader;
             std::unique_ptr<Texture> m_Texture0;
             std::unique_ptr<Texture> m_Texture1;
+            std::unique_ptr<GLuint> m_ShaderChoice = std::make_unique<GLuint>(0);
 
             // light cube
             std::unique_ptr<VertexArray> m_VAOCube;

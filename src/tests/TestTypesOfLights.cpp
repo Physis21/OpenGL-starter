@@ -159,6 +159,7 @@ namespace test {
             // Updates and exports the camera matrix to the Vertex Shader
             m_Camera->Matrix(*m_Shader, "u_CamMatrix");
             m_Shader->SetUniform3f("u_CamPos", camPos.x, camPos.y, camPos.z);
+            m_Shader->SetUniform1ui("u_ShaderChoice", *m_ShaderChoice);
 
             renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
         }
@@ -175,8 +176,27 @@ namespace test {
         {
             glm::vec3 cameraOrientation = m_Camera->GetOrientation();
             ImGui::Begin("My GUI window!");
-            ImGui::TextWrapped("Here a second texture is added to the 2d Plane, with a single channel.\n"
-                    "It is the specular map, and is used as the 'specular' variable in Phong shading.");
+            ImGui::TextWrapped("Here we can check different kinds of shadings,"
+                    "by changing the algorithm for light intensity in the fragment shader."
+                    "If I were to optimize performance, I would use different shader programs"
+                    "instead of using switch statements in the fragment shader.");
+
+            // Popup to select shader
+            const char* names[] = { "Point Light", "Direct Light (single direction)", "Spotlight" };
+            if (ImGui::Button("Select Shader"))
+                ImGui::OpenPopup("shader_choice");
+            ImGui::SameLine();
+            ImGui::TextUnformatted(names[*m_ShaderChoice]);
+            if (ImGui::BeginPopup("shader_choice"))
+            {
+                ImGui::SeparatorText("Fragment Shader program");
+                for (int i = 0; i < IM_COUNTOF(names); i++)
+                    if (ImGui::Selectable(names[i]))
+                        *m_ShaderChoice = i;
+                ImGui::EndPopup();
+            }
+
+            // Misc metrics
             ImGui::TextWrapped("Current Camera orientation: (%.2f , %.2f, %.2f)",
                     cameraOrientation[0],
                     cameraOrientation[1],

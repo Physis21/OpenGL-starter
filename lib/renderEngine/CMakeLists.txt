@@ -15,6 +15,7 @@ target_sources(RenderEngine
         Texture.cpp
         ObjLoader.cpp
         Camera.cpp
+        Mesh.cpp
     PUBLIC FILE_SET HEADERS FILES
         GLErrorManager.hpp
         VertexBuffer.hpp
@@ -26,6 +27,7 @@ target_sources(RenderEngine
         Texture.hpp
         ObjLoader.hpp
         Camera.hpp
+        Mesh.hpp
 )
 
 target_link_libraries(RenderEngine

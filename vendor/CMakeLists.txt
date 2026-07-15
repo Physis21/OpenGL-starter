@@ -87,3 +87,15 @@ FetchContent_MakeAvailable(tinyobjloader)
 add_library(tinyobjloader_c STATIC tinyobj/tinyobj.cpp)
 # Tell the compiler where to find the header files for stb_image (-I search path flag)
 target_include_directories(tinyobjloader_c PUBLIC ${tinyobjloader_SOURCE_DIR})
+
+# Assimp for loading any kind of 3D asset
+FetchContent_Declare(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git 
+    GIT_TAG v6.0.5
+)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE BOOL "" FORCE)
+set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(assimp)

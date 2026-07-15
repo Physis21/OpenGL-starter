@@ -1,7 +1,7 @@
 #include "Texture.hpp"
 
 Texture::Texture(const std::string& path, bool filterNearest, GLint format) 
-: m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0), m_FilterNearest(filterNearest){
+: m_Name(path), m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0), m_FilterNearest(filterNearest){
     /* In OpenGL, the bottom left is 0, 0
      * while in stb, the top left is 0, 0
      */
