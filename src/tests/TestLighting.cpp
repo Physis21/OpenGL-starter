@@ -192,7 +192,9 @@ namespace test {
             glm::vec3 cameraOrientation = m_Camera->GetOrientation();
             ImGui::Begin("My GUI window!");
             ImGui::TextWrapped("Here user input is handled by GLFW in the `Camera` class.\n"
-                    "Currently, all camera inputs are disabled when hovering ImGUI windows.");
+                    "Currently, all camera inputs are disabled when hovering ImGUI windows.\n"
+                    "The Phong lighting parameters here are all hard-written into the shader.\n"
+                    "A single texture is used for the pyramid.");
             ImGui::TextWrapped("Current Camera orientation: (%.2f , %.2f, %.2f)",
                     cameraOrientation[0],
                     cameraOrientation[1],

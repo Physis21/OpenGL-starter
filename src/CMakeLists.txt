@@ -12,6 +12,7 @@ target_sources(OpenGL-starter
         tests/TestCamera.cpp
         tests/TestLighting.cpp
         tests/TestSpecMap.cpp
+        tests/TestTypesOfLights.cpp
     PRIVATE FILE_SET HEADERS FILES
         main.hpp
         tests/Test.hpp
@@ -22,6 +23,7 @@ target_sources(OpenGL-starter
         tests/TestCamera.hpp
         tests/TestLighting.hpp
         tests/TestSpecMap.hpp
+        tests/TestTypesOfLights.hpp
 )
 target_link_libraries(OpenGL-starter
     PRIVATE

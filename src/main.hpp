@@ -31,3 +31,4 @@
 #include "tests/TestCamera.hpp"
 #include "tests/TestLighting.hpp"
 #include "tests/TestSpecMap.hpp"
+#include "tests/TestTypesOfLights.hpp"

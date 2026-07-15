@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "tests/TestTypesOfLights.hpp"
 
 int main(int argc, char**argv){
     if (!glfwInit()) {
@@ -123,9 +124,10 @@ int main(int argc, char**argv){
         testMenu->RegisterTest<test::TestTexture2D>("2D Texture", window);
         testMenu->RegisterTest<test::TestTexture3D>("3D Texture", window);
         testMenu->RegisterTest<test::TestObjLoad>("OBJ file loading", window);
-        testMenu->RegisterTest<test::TestCamera>("Camera from LearnOpenGL", window);
-        testMenu->RegisterTest<test::TestLighting>("Lighting from LearnOpenGL", window);
-        testMenu->RegisterTest<test::TestSpecMap>("SpecMap from LearnOpenGL", window);
+        testMenu->RegisterTest<test::TestCamera>("Camera Implementation", window);
+        testMenu->RegisterTest<test::TestLighting>("Lighting Basic", window);
+        testMenu->RegisterTest<test::TestSpecMap>("Specular Map on 2D plane", window);
+        testMenu->RegisterTest<test::TestTypesOfLights>("Different types of light", window);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
