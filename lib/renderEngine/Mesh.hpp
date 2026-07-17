@@ -1,3 +1,5 @@
+#pragma once
+
 #include "VertexArray.hpp"
 #include "VertexStruct.hpp"
 #include "VertexBuffer.hpp"

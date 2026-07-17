@@ -16,6 +16,7 @@ target_sources(RenderEngine
         ObjLoader.cpp
         Camera.cpp
         Mesh.cpp
+        Model.cpp
     PUBLIC FILE_SET HEADERS FILES
         GLErrorManager.hpp
         VertexBuffer.hpp
@@ -28,6 +29,7 @@ target_sources(RenderEngine
         ObjLoader.hpp
         Camera.hpp
         Mesh.hpp
+        Model.hpp
 )
 
 target_link_libraries(RenderEngine
@@ -36,4 +38,5 @@ target_link_libraries(RenderEngine
     stb_image
     glm::glm
     tinyobjloader
+    assimp
 )
