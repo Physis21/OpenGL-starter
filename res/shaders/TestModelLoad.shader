@@ -25,8 +25,8 @@ uniform sampler2D texture_specular1;
 
 void main()
 {    
-    vec4 diffuseColor = texture(texture_diffuse1, TexCoords);
-    vec4 specularColor = texture(texture_specular1, TexCoords);
-    // crude combine just to make use of both — replace with real lighting later
-    FragColor = diffuseColor + specularColor; // placeholder so specular is "used"
+    // Show the diffuse (color) map directly. The specular map is a lighting
+    // mask, not a color — it should modulate highlights once lighting is added,
+    // NOT be added to the color. Adding it washed the texture out.
+    FragColor = texture(texture_diffuse1, TexCoords);
 }

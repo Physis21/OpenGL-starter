@@ -18,12 +18,14 @@ Texture::Texture(const std::string& path, bool filterNearest, GLint format, bool
 
     /* NOTE: Without these 4 parameters, you will get a black texture */
 
-    /* MIN_FILTER is how the texture is minimized, and GL_LINEAR means we lineary resample everything */
-    GLuint filter;
-    if (filterNearest) {filter = GL_NEAREST;} else {filter = GL_LINEAR;}
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter));
-    /* MAG_FILTER is how the texture is magnified */
-    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter));
+    /* MIN filter runs when the texture is minified (far away / small on screen):
+     * use a *_MIPMAP_* variant so it samples the small mip levels we generate below,
+     * instead of the full-resolution image every fragment (huge bandwidth cost).
+     * MAG filter runs when magnified; mipmaps don't apply there, so it stays plain. */
+    GLuint magFilter = filterNearest ? GL_NEAREST : GL_LINEAR;
+    GLuint minFilter = filterNearest ? GL_NEAREST_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR;
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 

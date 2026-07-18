@@ -152,7 +152,7 @@ namespace test {
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         /* Create Camera using current display port */
-        m_Camera->SetHeight(display_w);
+        m_Camera->SetWidth(display_w);
         m_Camera->SetHeight(display_h);
         // Handles camera inputs
         
@@ -190,6 +190,7 @@ namespace test {
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
             glm::vec3 cameraOrientation = m_Camera->GetOrientation();
+            glm::vec3 cameraPosition = m_Camera->GetPosition();
             ImGui::Begin("My GUI window!");
             ImGui::TextWrapped("Here user input is handled by GLFW in the `Camera` class.\n"
                     "Currently, all camera inputs are disabled when hovering ImGUI windows.\n"
@@ -199,6 +200,10 @@ namespace test {
                     cameraOrientation[0],
                     cameraOrientation[1],
                     cameraOrientation[2]);
+            ImGui::TextWrapped("Current Camera position: (%.2f , %.2f, %.2f)",
+                    cameraPosition[0],
+                    cameraPosition[1],
+                    cameraPosition[2]);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_ImGuiIO.Framerate, m_ImGuiIO.Framerate);
             ImGui::End();
         }

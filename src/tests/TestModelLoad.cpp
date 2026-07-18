@@ -45,7 +45,7 @@ namespace test {
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         /* Create Camera using current display port */
-        m_Camera->SetHeight(display_w);
+        m_Camera->SetWidth(display_w);
         m_Camera->SetHeight(display_h);
         // Handles camera inputs
         
@@ -60,15 +60,16 @@ namespace test {
 
         m_Camera->UpdateMatrix(45.0f, 0.1f, 100.0f);
         glm::vec3 camPos = m_Camera->GetPosition(); // Updated by Inputs()
+        m_Camera->Matrix(*m_Shader, "u_CamMatrix");
         // Here the shader is bound inside the function.
         m_Model->Draw(*m_Shader);
         // Updates and exports the camera matrix to the Vertex Shader
-        m_Camera->Matrix(*m_Shader, "u_CamMatrix");
     }
     void TestModelLoad::OnImGuiRender() {
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
             glm::vec3 cameraOrientation = m_Camera->GetOrientation();
+            glm::vec3 cameraPosition = m_Camera->GetPosition();
             ImGui::Begin("My GUI window!");
             ImGui::TextWrapped("Here we test the loading of a model from an .obj file with"
                     "assimp, the Open Asset Import Library. This library supports various 3D file formats.");
@@ -78,6 +79,10 @@ namespace test {
                     cameraOrientation[0],
                     cameraOrientation[1],
                     cameraOrientation[2]);
+            ImGui::TextWrapped("Current Camera position: (%.2f , %.2f, %.2f)",
+                    cameraPosition[0],
+                    cameraPosition[1],
+                    cameraPosition[2]);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_ImGuiIO.Framerate, m_ImGuiIO.Framerate);
             ImGui::End();
         }

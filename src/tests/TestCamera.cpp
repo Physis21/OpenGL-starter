@@ -79,7 +79,7 @@ namespace test {
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         /* Create Camera using current display port */
-        m_Camera->SetHeight(display_w);
+        m_Camera->SetWidth(display_w);
         m_Camera->SetHeight(display_h);
         // Handles camera inputs
         

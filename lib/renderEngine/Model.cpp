@@ -117,7 +117,7 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
 	if (!skip) {
 	    // Backpack diffuse/specular maps are 3-channel JPEGs -> GL_RGB.
 	    // flipVertically=false because assimp already applied aiProcess_FlipUVs.
-	    auto texture = std::make_shared<Texture>(fullPath, false, GL_RGB, false);
+	    auto texture = std::make_shared<Texture>(fullPath, false, GL_RGB, true);
 	    texture->SetType(typeName);
 	    textures.push_back(texture);
 	    m_TexturesLoaded.push_back(texture);
