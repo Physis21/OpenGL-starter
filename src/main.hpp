@@ -32,3 +32,4 @@
 #include "tests/TestLighting.hpp"
 #include "tests/TestSpecMap.hpp"
 #include "tests/TestTypesOfLights.hpp"
+#include "tests/TestModelLoad.hpp"

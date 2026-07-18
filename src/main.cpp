@@ -128,6 +128,7 @@ int main(int argc, char**argv){
         testMenu->RegisterTest<test::TestLighting>("Lighting Basic", window);
         testMenu->RegisterTest<test::TestSpecMap>("Specular Map on 2D plane", window);
         testMenu->RegisterTest<test::TestTypesOfLights>("Different types of light", window);
+        testMenu->RegisterTest<test::TestModelLoad>("OBJ file loading with Assimp", window);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

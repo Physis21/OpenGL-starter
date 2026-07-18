@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <ios>
 #include <iostream>
 #include <signal.h>
 #include <vector>

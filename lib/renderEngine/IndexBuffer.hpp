@@ -16,6 +16,23 @@ public:
      */
     IndexBuffer(const unsigned int* data, const unsigned int& count);
     ~IndexBuffer();
+    
+    // Disallow copying, because destructor deletes EBO in memory
+    IndexBuffer(const IndexBuffer&) = delete;
+    IndexBuffer& operator=(const IndexBuffer&) = delete;
+
+    IndexBuffer(IndexBuffer&& other) noexcept
+        : m_RendererID(other.m_RendererID) {
+            other.m_RendererID = 0; // null-out so its destructor is a no-op
+        }
+    IndexBuffer& operator=(IndexBuffer&& other) noexcept {
+        if (this != &other) {
+            GLCall(glDeleteBuffers(1, &m_RendererID)); // free what we currently own
+            m_RendererID = other.m_RendererID;
+            other.m_RendererID = 0;
+        }
+        return *this;
+    }
 
     void Bind() const;
     void Unbind() const;

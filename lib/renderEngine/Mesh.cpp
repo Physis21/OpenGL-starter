@@ -1,7 +1,6 @@
 #include "Mesh.hpp"
-#include "VertexArray.hpp"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<ModelTexture>& textures)
     : m_Vertices(vertices),
       m_Indices(indices),
       m_Textures(textures),
@@ -13,17 +12,12 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>&
 }
 
 void Mesh::setupMesh() {
-    m_VBO = VertexBuffer(m_Vertices.data(), m_Vertices.size());
-    m_EBO = IndexBuffer(m_Indices.data(), m_Indices.size());
-
     VertexBufferLayout layout;
     layout.Push<float>(3); // Coords
-    layout.Push<float>(2); // TexCoord
     layout.Push<float>(3); // Normals
+    layout.Push<float>(2); // TexCoord
     m_VAO.AddBuffer(m_VBO, layout);
 }
-
-// TODO: Draw implementation
 
 void Mesh::Draw(Shader &shader) 
 {
@@ -35,14 +29,16 @@ void Mesh::Draw(Shader &shader)
     {
         // retrieve texture number (the N in diffuse_textureN)
 	std::string number;
-	std::string name = m_Textures[i].GetName();
-        if(name == "texture_diffuse")
+	std::string name = m_Textures[i].type;
+        if (name == "texture_diffuse")
             number = std::to_string(diffuseNr++);
-        else if(name == "texture_specular")
+        else if (name == "texture_specular")
             number = std::to_string(specularNr++);
 
-        shader.SetUniform1i(("material." + name + number).c_str(), i);
-	m_Textures[i].Bind(i);
+        // shader.SetUniform1i(("material." + name + number).c_str(), i);
+        shader.SetUniform1i((name + number).c_str(), i);
+        GLCall(glBindTexture(GL_TEXTURE_2D, m_Textures[i].id));
+        GLCall(glActiveTexture(GL_TEXTURE0 + i)); // Different than learnOpengl.com, I think they made a mistake
     }
 
     // draw mesh

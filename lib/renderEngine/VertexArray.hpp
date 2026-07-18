@@ -14,6 +14,23 @@ private:
 public:
     VertexArray();
     ~VertexArray();
+    
+    // Disallow copying, because destructor deletes EBO in memory
+    VertexArray(const VertexArray&) = delete;
+    VertexArray& operator=(const VertexArray&) = delete;
+
+    VertexArray(VertexArray&& other) noexcept
+        : m_RendererID(other.m_RendererID) {
+            other.m_RendererID = 0; // null-out so its destructor is a no-op
+        }
+    VertexArray& operator=(VertexArray&& other) noexcept {
+        if (this != &other) {
+            GLCall(glDeleteVertexArrays(1, &m_RendererID)); // free what we currently own
+            m_RendererID = other.m_RendererID;
+            other.m_RendererID = 0;
+        }
+        return *this;
+    }
 
     /* Bind the vertex array, and bind the vertex buffer to it.
      * The VertexBufferElements of the VertexBufferLayout are iterated on,
