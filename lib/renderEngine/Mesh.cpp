@@ -1,5 +1,10 @@
 #include "Mesh.hpp"
 
+std::ostream& operator<<(std::ostream& os, const ModelTexture& texture) {
+    os << "id: " << texture.id << ", type: " << texture.type << ", path: " << texture.path;
+    return os;
+}
+
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<ModelTexture>& textures)
     : m_Vertices(vertices),
       m_Indices(indices),
@@ -9,7 +14,13 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>&
 {
     // m_VAO setup still needs the layout, so build it here
     setupMesh();
+    // std::cout << "Loaded Mesh. Textures in m_Textures: \n";
+    // for (const ModelTexture& texture : textures) {
+    //     std::cout << texture << "\n";
+    // }
+    // std::cout << std::endl;
 }
+
 
 void Mesh::setupMesh() {
     VertexBufferLayout layout;
@@ -45,4 +56,4 @@ void Mesh::Draw(Shader &shader)
     Renderer renderer;
     renderer.Draw(m_VAO, m_EBO, shader);
     m_VAO.Unbind();
-}  
+}

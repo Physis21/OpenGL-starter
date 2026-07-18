@@ -28,6 +28,22 @@ class Shader {
         Shader(const std::string& filepath);
         ~Shader();
 
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
+        Shader(Shader&& other) noexcept
+            : m_RendererID(other.m_RendererID), m_FilePath(std::move(other.m_FilePath)) {
+                other.m_RendererID = 0; // null-out so its destructor is a no-op
+            }
+        Shader& operator=(Shader&& other) noexcept {
+            if (this != &other) {
+                GLCall(glDeleteProgram(m_RendererID));
+                m_RendererID = other.m_RendererID;
+                m_FilePath = std::move(other.m_FilePath);
+                other.m_RendererID = 0;
+            }
+            return *this;
+        }
+
         unsigned int GetRendererID() const;
 
         void Bind() const;

@@ -19,16 +19,10 @@ namespace test {
 
 
         /************ Model & its shader *****************/
-        std::cout << "Loading Model..." << std::endl;
+        std::cout << "Loading Model...\n";
         m_Model = std::make_unique<Model>("res/models/backpack/backpack.obj");
-        std::cout << "Model successfully loaded. Textures:\n";
-        // const std::vector<Mesh>& meshes = m_Model->GetMeshes();
-        // const Mesh& mesh1 = meshes[0];
-        // for (unsigned int i = 0; i < mesh1.GetTextures().size(); i++) {
-        //     std::cout << "texture" << i << ": " << mesh1.GetTextures()[i].path << "\n";
-        // }
-
-        std::cout << "Loading Shader..." << std::endl;
+        std::cout << "Model successfully loaded\n";
+        std::cout << "Loading Shader...\n";
         m_Shader = std::make_unique<Shader>("res/shaders/TestModelLoad.shader");
         std::cout << "Shader successfully loaded" << std::endl;
 

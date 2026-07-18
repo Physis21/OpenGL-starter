@@ -81,9 +81,7 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
 
     // After this, create VertexBufferLayout, and create VAO. Then assign values to the VertexBufferObject and IndexBuffer to return with getters
 }
-ObjLoader::~ObjLoader() {
 
-}
 std::ostream& operator<<(std::ostream& os, const std::vector<Vertex>& vv) {
     for (size_t i = 0; i < vv.size(); i++) {
         Vertex vertex = vv[i];

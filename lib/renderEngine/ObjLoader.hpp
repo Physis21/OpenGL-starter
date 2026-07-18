@@ -29,7 +29,6 @@ class ObjLoader {
         /* From OBJ file path, get a vertex buffer, index buffer, and vertex buffer layout
          */
         ObjLoader(const std::string& filepath = "res/objects/cube/cube.obj", const std::string& mtl_search_path = "res/objects/cube");
-        ~ObjLoader();
 
         std::vector<Vertex> GetVertices() const { return m_Vertices; };
         std::vector<uint32_t> GetIndices() const { return m_Indices; };

@@ -146,10 +146,13 @@ vec4 spotLight() {
 	float inten = clamp((angle - outerCone) / (innerCone - outerCone), 0.0f, 1.0f);
 
 	// here don't forget `.r` for the specular map texture calc, as we only want the first value.
-	return (
-		texture(u_Tex0, v_TexCoord) * (diffuse * inten + ambient) 
-		+ texture(u_Tex1, v_TexCoord).r * specular * inten
-	) * u_LightColor ;
+	return vec4(
+		(
+			texture(u_Tex0, v_TexCoord) * (diffuse * inten + ambient) 
+			+ texture(u_Tex1, v_TexCoord).r * specular * inten * u_LightColor
+		).xyz,
+		1.0f
+	) ;
 }
 
 void main()

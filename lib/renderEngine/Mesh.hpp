@@ -9,12 +9,15 @@
 #include "VertexBufferLayout.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
+#include <ostream>
 #include <vector>
 
 struct ModelTexture {
     unsigned int id;
     std::string type;
     std::string path; // we store the path of the texture to compare with other textures
+
+    friend std::ostream& operator<<(std::ostream& os, const ModelTexture& texture);
 };
 
 class Mesh {

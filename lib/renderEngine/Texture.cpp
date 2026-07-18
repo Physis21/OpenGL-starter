@@ -43,7 +43,8 @@ Texture::Texture(const std::string& path, bool filterNearest, GLint format)
         stbi_image_free(m_LocalBuffer);
 } 
 Texture::~Texture() {
-    GLCall(glDeleteTextures(1, &m_RendererID));
+    if (m_RendererID != 0)
+        GLCall(glDeleteTextures(1, &m_RendererID));
 }
 
 void Texture::Bind(unsigned int slot) const {

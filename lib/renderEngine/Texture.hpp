@@ -20,6 +20,29 @@ class Texture {
         Texture(const std::string& path, bool filterNearest = false, GLint format = GL_RGBA);
         ~Texture();
 
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
+        Texture(Texture&& other) noexcept:
+            m_Name(std::move(other.m_Name)),
+            m_RendererID(other.m_RendererID),
+            m_FilePath(std::move(other.m_FilePath)),
+            m_LocalBuffer(std::move(other.m_LocalBuffer)),
+            m_Width(other.m_Width),
+            m_Height(other.m_Height),
+            m_BPP(other.m_BPP),
+            m_FilterNearest(other.m_FilterNearest)
+        {
+                other.m_RendererID = 0; // null-out so its destructor is a no-op
+        }
+        Texture& operator=(Texture&& other) noexcept {
+            if (this != &other) {
+                GLCall(glDeleteTextures(1, &m_RendererID)); // free what we currently own
+                m_RendererID = other.m_RendererID;
+                other.m_RendererID = 0;
+            }
+            return *this;
+        }
+
         void Bind(unsigned int slot = 0) const;
         void Unbind() const;
 

@@ -27,9 +27,6 @@ class Model {
         Model& operator=(Model&&) noexcept = default;
 
         void Draw(Shader &shader);
-
-        // return a const reference instead of a value copy, no need to hand out ownership
-        const std::vector<Mesh>& GetMeshes() const { return m_Meshes; };
     private:
         // model data
         std::vector<ModelTexture> m_TexturesLoaded;
