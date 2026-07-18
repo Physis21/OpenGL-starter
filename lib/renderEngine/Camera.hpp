@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glad.h"
+#include <glad.h>
 #include "glm/ext/quaternion_trigonometric.hpp"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/ext/matrix_clip_space.hpp"

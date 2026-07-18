@@ -2,8 +2,8 @@
 
 #include "Test.hpp"
 #include "GLErrorManager.hpp"
-#include "glad.h"
-#include "imgui.h"
+#include <glad.h>
+#include <imgui.h>
 
 namespace test {
 

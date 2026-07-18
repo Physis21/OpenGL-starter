@@ -3,7 +3,7 @@
 #include <optional>
 #include <string>
 #include "GLErrorManager.hpp"
-#include "glad.h"
+#include <glad.h>
 #include "stb_image.h"
 
 class Texture {

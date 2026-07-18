@@ -6,7 +6,7 @@
 #include <fstream>
 #include <unordered_map>
 
-#include "glad.h"
+#include <glad.h>
 #include "GLErrorManager.hpp"
 #include "glm/glm.hpp"
 

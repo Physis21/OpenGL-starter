@@ -40,3 +40,21 @@ target_link_libraries(RenderEngine
     tinyobjloader
     assimp
 )
+
+# PRIVATE means the PCH is used only when compiling RenderEngine's own cpp files.
+# If I used PUBLIC, CMake would force these headers into the PCH of anything linking RenderEngine.
+# For glad.h, use <glad.h> here instead of "glad.h" as CMake will otherwise try to resolve
+# the file in the CMAKE_CURRENT_SOURCE_DIR. <..> searches in the compiler's include search.
+target_precompile_headers(RenderEngine
+    PRIVATE
+        <vector>
+        <string>
+        <memory>
+        <iostream>
+        <unordered_map>
+        <sstream>
+        <fstream>
+        <glad.h>
+        <GLFW/glfw3.h>
+        <glm/glm.hpp>
+)

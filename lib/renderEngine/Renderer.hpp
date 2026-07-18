@@ -3,7 +3,7 @@
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Shader.hpp"
-#include "glad.h"
+#include <glad.h>
 
 class Renderer {
     public:

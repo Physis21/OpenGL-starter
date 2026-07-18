@@ -4,7 +4,7 @@
 #include <iostream>
 #include <signal.h>
 #include <vector>
-#include "glad.h"
+#include <glad.h>
 
 #define ASSERT(x) if (!(x)) raise(SIGTRAP)
 // #x convert x to a string

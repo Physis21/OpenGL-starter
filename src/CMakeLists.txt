@@ -36,4 +36,14 @@ target_link_libraries(OpenGL-starter
         RenderEngine
         tinyobjloader
 )
-
+target_precompile_headers(OpenGL-starter
+    PRIVATE
+        <vector>
+        <string>
+        <memory>
+        <iostream>
+        <imgui.h>
+        <glad.h>
+        <GLFW/glfw3.h>
+        <glm/glm.hpp>
+)

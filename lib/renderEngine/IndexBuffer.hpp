@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLErrorManager.hpp"
-#include "glad.h"
+#include <glad.h>
 
 class IndexBuffer {
 

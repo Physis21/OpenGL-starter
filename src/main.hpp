@@ -2,14 +2,14 @@
 
 #include <iostream>
 #include <string>
-#include "glad.h" // always include before GLFW
+#include <glad.h> // always include before GLFW
 #include <GLFW/glfw3.h>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 /* My libraries */
 #include "GLErrorManager.hpp"

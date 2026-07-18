@@ -3,7 +3,7 @@
 #include "GLErrorManager.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexBufferLayout.hpp"
-#include "glad.h"
+#include <glad.h>
 
 class VertexArray {
 
