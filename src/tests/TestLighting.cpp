@@ -157,7 +157,7 @@ namespace test {
         // Handles camera inputs
         
         if (!m_ImGuiIO.WantCaptureMouse) {
-            m_Camera->Inputs(window);
+            m_Camera->Inputs(window, deltatime);
         }
     }
     void TestLighting::OnRender() {

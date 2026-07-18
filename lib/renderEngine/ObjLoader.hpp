@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
@@ -27,6 +28,8 @@ struct IndexEqual {
 class ObjLoader {
     public:
         /* From OBJ file path, get a vertex buffer, index buffer, and vertex buffer layout
+         * Throws runtime exception if there is no material, shape, normal indices, texcoord indices.
+         * Also throws runtime exception on tinyobj errors.
          */
         ObjLoader(const std::string& filepath = "res/objects/cube/cube.obj", const std::string& mtl_search_path = "res/objects/cube");
 

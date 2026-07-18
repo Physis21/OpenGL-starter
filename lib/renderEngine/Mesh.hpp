@@ -9,22 +9,15 @@
 #include "VertexBufferLayout.hpp"
 #include "Shader.hpp"
 #include "Renderer.hpp"
-#include <ostream>
+#include "Texture.hpp"
+#include <memory>
 #include <vector>
-
-struct ModelTexture {
-    unsigned int id;
-    std::string type;
-    std::string path; // we store the path of the texture to compare with other textures
-
-    friend std::ostream& operator<<(std::ostream& os, const ModelTexture& texture);
-};
 
 class Mesh {
     private:
         std::vector<Vertex>         m_Vertices;
         std::vector<unsigned int>   m_Indices;
-        std::vector<ModelTexture>        m_Textures;
+        std::vector<std::shared_ptr<Texture>>  m_Textures;
 
         VertexBuffer m_VBO;
         IndexBuffer m_EBO;
@@ -37,7 +30,7 @@ class Mesh {
         Mesh(
                 const std::vector<Vertex>& vertices,
                 const std::vector<unsigned int>& indices,
-                const std::vector<ModelTexture>& textures
+                const std::vector<std::shared_ptr<Texture>>& textures
         );
 
         // delete copy constructors as Mesh owns 3 RAII wrappers around raw GL objects.
@@ -52,7 +45,7 @@ class Mesh {
 
         const std::vector<Vertex>&         GetVertices() const { return m_Vertices; };
         const std::vector<unsigned int>&   GetIndices() const { return m_Indices; };
-        const std::vector<ModelTexture>&        GetTextures() const { return m_Textures; };
+        const std::vector<std::shared_ptr<Texture>>&  GetTextures() const { return m_Textures; };
 
         void Draw(Shader& shader);
 };

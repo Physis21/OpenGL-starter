@@ -22,14 +22,17 @@ public:
     IndexBuffer& operator=(const IndexBuffer&) = delete;
 
     IndexBuffer(IndexBuffer&& other) noexcept
-        : m_RendererID(other.m_RendererID) {
+        : m_RendererID(other.m_RendererID), m_Count(other.m_Count) {
             other.m_RendererID = 0; // null-out so its destructor is a no-op
+            other.m_Count = 0;
         }
     IndexBuffer& operator=(IndexBuffer&& other) noexcept {
         if (this != &other) {
             GLCall(glDeleteBuffers(1, &m_RendererID)); // free what we currently own
             m_RendererID = other.m_RendererID;
+            m_Count = other.m_Count;
             other.m_RendererID = 0;
+            other.m_Count = 0;
         }
         return *this;
     }

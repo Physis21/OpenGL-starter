@@ -2,7 +2,9 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 #include <stb_image.h>
+#include <stdexcept>
 
 #include "GLErrorManager.hpp"
 #include "VertexStruct.hpp"
@@ -29,7 +31,7 @@ class Model {
         void Draw(Shader &shader);
     private:
         // model data
-        std::vector<ModelTexture> m_TexturesLoaded;
+        std::vector<std::shared_ptr<Texture>> m_TexturesLoaded;
         std::vector<Mesh> m_Meshes;
         std::string m_Directory;
         bool m_GammaCorrection;
@@ -38,8 +40,6 @@ class Model {
         void loadModel(const std::string& path);
         void processNode(aiNode *node, const aiScene *scene);
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-        std::vector<ModelTexture> loadMaterialTextures(aiMaterial *mat, const aiTextureType& type, const std::string& typeName);
+        std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, const aiTextureType& type, const std::string& typeName);
 
 };
-
-unsigned int TextureFromFile(const char *path, const std::string &directory);

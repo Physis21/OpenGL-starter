@@ -1,24 +1,19 @@
 #include "Mesh.hpp"
 
-std::ostream& operator<<(std::ostream& os, const ModelTexture& texture) {
-    os << "id: " << texture.id << ", type: " << texture.type << ", path: " << texture.path;
-    return os;
-}
-
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<ModelTexture>& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<std::shared_ptr<Texture>>& textures)
     : m_Vertices(vertices),
       m_Indices(indices),
       m_Textures(textures),
-      m_VBO(m_Vertices.data(), m_Vertices.size()),
-      m_EBO(m_Indices.data(), m_Indices.size())
+      m_VBO(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex)), // require size in bytes
+      m_EBO(m_Indices.data(), m_Indices.size()) // require **count**
 {
     // m_VAO setup still needs the layout, so build it here
     setupMesh();
-    // std::cout << "Loaded Mesh. Textures in m_Textures: \n";
-    // for (const ModelTexture& texture : textures) {
-    //     std::cout << texture << "\n";
-    // }
-    // std::cout << std::endl;
+    std::cout << "Loaded Mesh. Textures in m_Textures: \n";
+    for (const std::shared_ptr<Texture>& texture : textures) {
+        std::cout << "type: " << texture->GetType() << ", path: " << texture->GetFilePath() << "\n";
+    }
+    std::cout << std::endl;
 }
 
 
@@ -40,16 +35,15 @@ void Mesh::Draw(Shader &shader)
     {
         // retrieve texture number (the N in diffuse_textureN)
 	std::string number;
-	std::string name = m_Textures[i].type;
+	std::string name = m_Textures[i]->GetType();
         if (name == "texture_diffuse")
             number = std::to_string(diffuseNr++);
         else if (name == "texture_specular")
             number = std::to_string(specularNr++);
 
-        // shader.SetUniform1i(("material." + name + number).c_str(), i);
-        shader.SetUniform1i((name + number).c_str(), i);
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_Textures[i].id));
-        GLCall(glActiveTexture(GL_TEXTURE0 + i)); // Different than learnOpengl.com, I think they made a mistake
+        // shader.SetUniform1i("material." + name + number, i);
+        shader.SetUniform1i(name + number, i);
+        m_Textures[i]->Bind(i);
     }
 
     // draw mesh

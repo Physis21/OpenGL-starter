@@ -11,7 +11,7 @@ private:
 public:
     /*
      * param[in] data the vertex buffer data
-     * param[in] size the size of `data`
+     * param[in] size the size of `data`, **IN BYTES**.
      * assigns a value to `m_RendererID` after binding a buffer
      */
     VertexBuffer(const void* data, const unsigned int& size);

@@ -1,6 +1,4 @@
 #include "Model.hpp"
-#include "GLErrorManager.hpp"
-#include <cstring>
 
 Model::Model(const std::string& path, bool gamma): m_GammaCorrection(gamma)  {
     loadModel(path);
@@ -26,6 +24,7 @@ void Model::loadModel(const std::string& path) {
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene) {
+    std::cout << "In node " << node->mName.C_Str() << ", there are " << node->mNumMeshes << " meshes." << std::endl;
     // Process all the node's meshes, if any
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 	// the node object only contains indices to index the actual objects in the scene. 
@@ -44,7 +43,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     // data to fill
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<ModelTexture> textures;
+    std::vector<std::shared_ptr<Texture>> textures;
 
     for (unsigned int i = 0; i<mesh->mNumVertices; i++) {
 	Vertex vertex;
@@ -90,78 +89,39 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     if (mesh->mMaterialIndex >= 0) {
 	aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 	// 1. diffuse maps
-	std::vector<ModelTexture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 	// 2. specular maps
-	std::vector<ModelTexture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<ModelTexture> Model::loadMaterialTextures(aiMaterial *mat, const aiTextureType& type,  const std::string& typeName) {
-    std::vector<ModelTexture> textures;
+std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *mat, const aiTextureType& type,  const std::string& typeName) {
+    std::vector<std::shared_ptr<Texture>> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
 	aiString str;
 	mat->GetTexture(type, i, &str);
+	std::string fullPath = m_Directory + '/' + std::string(str.C_Str());
+
+	// Reuse an already-loaded texture if the same file was requested before.
 	bool skip = false;
 	for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++) {
-	    if (std::strcmp(m_TexturesLoaded[j].path.data(), str.C_Str()) == 0) {
-		textures.push_back(m_TexturesLoaded[j]);
+	    if (m_TexturesLoaded[j]->GetFilePath() == fullPath) {
+		textures.push_back(m_TexturesLoaded[j]); // shares ownership, no reload
 		skip = true;
 		break;
 	    }
 	}
 	if (!skip) {
-	    ModelTexture texture;
-	    texture.id = TextureFromFile(str.C_Str(), this->m_Directory);
-	    texture.type = typeName;
-	    texture.path = str.C_Str();
+	    // Backpack diffuse/specular maps are 3-channel JPEGs -> GL_RGB.
+	    // flipVertically=false because assimp already applied aiProcess_FlipUVs.
+	    auto texture = std::make_shared<Texture>(fullPath, false, GL_RGB, false);
+	    texture->SetType(typeName);
 	    textures.push_back(texture);
 	    m_TexturesLoaded.push_back(texture);
 	}
     }
     return textures;
-}
-
-unsigned int TextureFromFile(const char *path, const std::string &directory)
-{
-    std::string filename = std::string(path);
-    filename = directory + '/' + filename;
-
-    unsigned int textureID;
-    GLCall(glGenTextures(1, &textureID));
-
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-    if (data)
-    {
-	GLenum format;
-	if (nrComponents == 1)
-	    format = GL_RED;
-	else if (nrComponents == 3)
-	    format = GL_RGB;
-	else if (nrComponents == 4)
-	    format = GL_RGBA;
-	else
-	    std::cout << "WARNING: texture 2 file has a number of components != 1, 3 or 4.\n";
-
-	GLCall(glBindTexture(GL_TEXTURE_2D, textureID));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
-	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
-
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
-	stbi_image_free(data);
-    }
-    else
-    {
-	std::cout << "Texture failed to load at path: " << path << std::endl;
-	stbi_image_free(data);
-    }
-
-    return textureID;
 }

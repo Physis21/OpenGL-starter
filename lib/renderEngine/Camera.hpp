@@ -14,6 +14,8 @@
 
 class Camera {
     private:
+        int m_Width;
+        int m_Height;
         glm::vec3 m_Position;
         // Current orientation
         glm::vec3 m_Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -21,9 +23,7 @@ class Camera {
         glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
         glm::mat4 m_CameraMatrix = glm::mat4(1.0f);
 
-        int m_Width;
-        int m_Height;
-        float m_Speed = 0.1f;
+        float m_Speed = 0.001f;
         float m_Sensitivity = 100.0f;
         // Prevents the camera from jumping around when first clicking left click
         bool m_FirstClick = true;
@@ -42,5 +42,8 @@ class Camera {
         /* Export the camera matrix to the specified vertex shader
          */
         void Matrix(const Shader& shader, const char* uniform);
-        void Inputs(GLFWwindow* window);
+        /* @param[in] window the current rendering window.
+         * @param[in] deltatime the time in ms since the last frame.
+         */
+        void Inputs(GLFWwindow* window, float deltatime);
 };

@@ -1,11 +1,12 @@
 #include "Texture.hpp"
 
-Texture::Texture(const std::string& path, bool filterNearest, GLint format) 
+Texture::Texture(const std::string& path, bool filterNearest, GLint format, bool flipVertically)
 : m_Name(path), m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0), m_FilterNearest(filterNearest){
     /* In OpenGL, the bottom left is 0, 0
-     * while in stb, the top left is 0, 0
-     */
-    stbi_set_flip_vertically_on_load(1);
+     * while in stb, the top left is 0, 0.
+     * stb's flip state is GLOBAL, so we set it explicitly on every load
+     * instead of relying on whatever the previous Texture left behind. */
+    stbi_set_flip_vertically_on_load(flipVertically ? 1 : 0);
     /* stbi_load writes the width and height to m_Width and m_Height, usign their references
      * if wanted to force 4 channels for RGBA, set 4 as the last parameter.
      * Else, set 0 so that stbi adapts to the image. */

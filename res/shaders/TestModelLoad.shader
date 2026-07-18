@@ -25,8 +25,8 @@ uniform sampler2D texture_specular1;
 
 void main()
 {    
-		vec4 diffuseColor = texture(texture_diffuse1, TexCoords);
+    vec4 diffuseColor = texture(texture_diffuse1, TexCoords);
     vec4 specularColor = texture(texture_specular1, TexCoords);
     // crude combine just to make use of both — replace with real lighting later
-    FragColor = diffuseColor + specularColor * 0.0; // placeholder so specular is "used"
+    FragColor = diffuseColor + specularColor; // placeholder so specular is "used"
 }

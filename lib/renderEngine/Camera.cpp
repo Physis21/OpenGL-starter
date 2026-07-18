@@ -33,39 +33,40 @@ void Camera::Matrix(const Shader& shader, const char* uniform) {
     glUniformMatrix4fv(glGetUniformLocation(shader.GetRendererID(), uniform), 1, GL_FALSE, glm::value_ptr(m_CameraMatrix));
 }
 
-void Camera::Inputs(GLFWwindow* window) {
+void Camera::Inputs(GLFWwindow* window, float deltatime) {
     // Handles key inputs
+    float speedXdtime = m_Speed * deltatime;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-	m_Position += m_Speed * m_Orientation;
+	m_Position += speedXdtime * m_Orientation;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-	m_Position += m_Speed * -glm::normalize(glm::cross(m_Orientation, m_Up));
+	m_Position += speedXdtime * -glm::normalize(glm::cross(m_Orientation, m_Up));
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-	m_Position += m_Speed * -m_Orientation;
+	m_Position += speedXdtime * -m_Orientation;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-	m_Position += m_Speed * glm::normalize(glm::cross(m_Orientation, m_Up));
+	m_Position += speedXdtime * glm::normalize(glm::cross(m_Orientation, m_Up));
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-	m_Position += m_Speed * m_Up;
+	m_Position += speedXdtime * m_Up;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
     {
-	m_Position += m_Speed * -m_Up;
+	m_Position += speedXdtime * -m_Up;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-	m_Speed = 0.4f;
+	m_Speed = 0.004f;
     }
     else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
     {
-	m_Speed = 0.1f;
+	m_Speed = 0.001f;
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) 

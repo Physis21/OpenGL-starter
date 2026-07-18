@@ -48,7 +48,7 @@ int main(int argc, char**argv){
     glfwMakeContextCurrent(window); // Create the OpenGL context
 
     // Disable vsync when manually controlling FPS
-    // glfwSwapInterval(1); // Limit framerate to match monitor (vsync)
+    glfwSwapInterval(1); // Limit framerate to match monitor (vsync)
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Couldn't open OpenGL" << std::endl;
@@ -107,7 +107,7 @@ int main(int argc, char**argv){
     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
     //IM_ASSERT(font != nullptr);
 
-    // FPS limiting
+    // FPS limiting, at the current unused in favor of vsync
     constexpr float TARGET_FPS = 60.0f;
     constexpr float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
     float lastRenderTime = (float)glfwGetTime();
@@ -144,10 +144,6 @@ int main(int argc, char**argv){
             // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
             // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
             // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-            if (currentTime - lastRenderTime < TARGET_FRAME_TIME) {
-                glfwPollEvents();
-                continue;
-            }
 
             deltaTime = currentTime - lastRenderTime;
             lastRenderTime = currentTime;

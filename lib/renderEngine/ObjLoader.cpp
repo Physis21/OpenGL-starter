@@ -25,24 +25,31 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
     
     // Find file and parse it
     if (!reader.ParseFromFile(filepath, reader_config)) {
-      if (!reader.Error().empty())
-          std::cerr << "TinyObjReader: " << reader.Error();
-      exit(1);
+        if (!reader.Error().empty())
+            throw std::runtime_error("TinyObjReader: " + reader.Error());
+        throw std::runtime_error("TinyObjReader: ParseFromFile failed, error not found.");
     }
 
     // If there is a warning from the parser, display it
     if (!reader.Warning().empty())
-      std::cout << "TinyObjReader: " << reader.Warning();
+        std::cout << "TinyObjReader: " << reader.Warning();
 
     const tinyobj::attrib_t& attrib = reader.GetAttrib();
     const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
     const std::vector<tinyobj::material_t>& materials = reader.GetMaterials();
 
-    m_Material = materials[0];
+    // Assume there is a single material
+    if (!materials.empty()) {
+        throw std::runtime_error("No material found from OBJ file");
+    } else {
+        m_Material = materials[0];
+    }
 
     // Log info about the loaded shape
-    std::cout << "Number of shapes: " << shapes.size() << std::endl; // In this test, use a single cube
-    if (!shapes.empty())
+    std::cout << "Number of shapes: " << shapes.size() << ". NOTE: ObjLoader loads a single one." << std::endl; // In this test, use a single cube
+    if (shapes.empty())
+        throw std::runtime_error("No shapes found from OBJ file");
+    else
         std::cout << "Number of indices: " << shapes[0].mesh.indices.size() << std::endl;
 
     // Initialize empty vectors implicitly
@@ -60,11 +67,15 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
             attrib.vertices[3 * idx.vertex_index + 1],
             attrib.vertices[3 * idx.vertex_index + 2],
         };
+        if (idx.normal_index < 0)
+            throw std::runtime_error("No normal index. ObjLoader requires this data.");
         vertex.normal = {
             attrib.normals[3 * idx.normal_index + 0],
             attrib.normals[3 * idx.normal_index + 1],
             attrib.normals[3 * idx.normal_index + 2],
         };
+        if (idx.texcoord_index < 0)
+            throw std::runtime_error("No texcoord index. ObjLoader requires this data.");
         vertex.texcoord = {
             attrib.texcoords[2 * idx.texcoord_index + 0],
             attrib.texcoords[2 * idx.texcoord_index + 1],
@@ -78,6 +89,7 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
 
         m_Indices.push_back(m_UniqueVertices[idx]);
     }
+    
 
     // After this, create VertexBufferLayout, and create VAO. Then assign values to the VertexBufferObject and IndexBuffer to return with getters
 }
