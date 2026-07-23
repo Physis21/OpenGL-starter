@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <string>
+#include <utility> // for std::swap
 #include "GLErrorManager.hpp"
 #include <glad.h>
 #include "stb_image.h"
@@ -18,44 +19,45 @@ class Texture {
         int m_Width, m_Height, m_BPP; // BPP = bits per pixels
         bool m_FilterNearest;
 
+        /* "Empty but valid" state, used only as the starting point for a move.
+         * Owns no GL handle, so its destructor is a no-op. */
+        Texture() noexcept
+            : m_Name(), m_RendererID(0), m_FilePath(), m_Type(),
+              m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0),
+              m_FilterNearest(false) {}
+
     public:
         Texture(const std::string& path, bool filterNearest = false, GLint format = GL_RGBA, bool flipVertically = true);
         ~Texture();
 
         Texture(const Texture&) = delete;
         Texture& operator=(const Texture&) = delete;
-        Texture(Texture&& other) noexcept:
-            m_Name(std::move(other.m_Name)),
-            m_RendererID(other.m_RendererID),
-            m_FilePath(std::move(other.m_FilePath)),
-            m_Type(std::move(other.m_Type)),
-            m_LocalBuffer(std::move(other.m_LocalBuffer)),
-            m_Width(other.m_Width),
-            m_Height(other.m_Height),
-            m_BPP(other.m_BPP),
-            m_FilterNearest(other.m_FilterNearest)
-        {
-                other.m_RendererID = 0; // null-out so its destructor is a no-op
-                other.m_LocalBuffer = nullptr;
+
+        /* Move via swap: start empty, then swap our state with `other`,
+         * leaving `other` empty and safely destructible. */
+        Texture(Texture&& other) noexcept : Texture() {
+            swap(*this, other);
         }
+        /* Swap with the incoming rvalue: our old resource ends up in `other`,
+         * which the caller destroys - that is what frees it. Self-move is a no-op. */
         Texture& operator=(Texture&& other) noexcept {
-            if (this != &other) {
-                GLCall(glDeleteTextures(1, &m_RendererID)); // free what we currently own
-                // Move ALL members so we don't keep stale metadata alongside the new handle.
-                m_Name          = std::move(other.m_Name);
-                m_RendererID    = other.m_RendererID;
-                m_FilePath      = std::move(other.m_FilePath);
-                m_Type          = std::move(other.m_Type);
-                m_LocalBuffer   = other.m_LocalBuffer;
-                m_Width         = other.m_Width;
-                m_Height        = other.m_Height;
-                m_BPP           = other.m_BPP;
-                m_FilterNearest = other.m_FilterNearest;
-                // null-out the source's owning handles so its destructor is a no-op
-                other.m_RendererID  = 0;
-                other.m_LocalBuffer = nullptr;
-            }
+            swap(*this, other);
             return *this;
+        }
+
+        /* Single place that knows every member. Found by ADL, so `std::swap(a, b)`
+         * and generic code pick this up. */
+        friend void swap(Texture& a, Texture& b) noexcept {
+            using std::swap;
+            swap(a.m_Name,          b.m_Name);
+            swap(a.m_RendererID,    b.m_RendererID);
+            swap(a.m_FilePath,      b.m_FilePath);
+            swap(a.m_Type,          b.m_Type);
+            swap(a.m_LocalBuffer,   b.m_LocalBuffer);
+            swap(a.m_Width,         b.m_Width);
+            swap(a.m_Height,        b.m_Height);
+            swap(a.m_BPP,           b.m_BPP);
+            swap(a.m_FilterNearest, b.m_FilterNearest);
         }
 
         /* Selects the unit (glActiveTexture) then binds into it, in the correct order. */
