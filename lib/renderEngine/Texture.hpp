@@ -28,6 +28,7 @@ class Texture {
             m_Name(std::move(other.m_Name)),
             m_RendererID(other.m_RendererID),
             m_FilePath(std::move(other.m_FilePath)),
+            m_Type(std::move(other.m_Type)),
             m_LocalBuffer(std::move(other.m_LocalBuffer)),
             m_Width(other.m_Width),
             m_Height(other.m_Height),
@@ -40,8 +41,19 @@ class Texture {
         Texture& operator=(Texture&& other) noexcept {
             if (this != &other) {
                 GLCall(glDeleteTextures(1, &m_RendererID)); // free what we currently own
-                m_RendererID = other.m_RendererID;
-                other.m_RendererID = 0;
+                // Move ALL members so we don't keep stale metadata alongside the new handle.
+                m_Name          = std::move(other.m_Name);
+                m_RendererID    = other.m_RendererID;
+                m_FilePath      = std::move(other.m_FilePath);
+                m_Type          = std::move(other.m_Type);
+                m_LocalBuffer   = other.m_LocalBuffer;
+                m_Width         = other.m_Width;
+                m_Height        = other.m_Height;
+                m_BPP           = other.m_BPP;
+                m_FilterNearest = other.m_FilterNearest;
+                // null-out the source's owning handles so its destructor is a no-op
+                other.m_RendererID  = 0;
+                other.m_LocalBuffer = nullptr;
             }
             return *this;
         }
