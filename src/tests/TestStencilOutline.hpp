@@ -30,6 +30,7 @@ namespace test {
             // pyramid
             std::unique_ptr<Model> m_Model;
             std::unique_ptr<Shader> m_Shader;
+            std::unique_ptr<Shader> m_OutlineShader;
 
             std::unique_ptr<Camera> m_Camera;
 
