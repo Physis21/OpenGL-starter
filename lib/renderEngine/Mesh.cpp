@@ -1,11 +1,23 @@
 #include "Mesh.hpp"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<std::shared_ptr<Texture>>& textures)
+Mesh::Mesh(
+        const std::vector<Vertex>& vertices,
+        const std::vector<unsigned int>& indices,
+        const std::vector<std::shared_ptr<Texture>>& textures,
+        const aiColor3D& Ka,
+        const aiColor3D& Kd,
+        const aiColor3D& Ks,
+        const aiColor3D& Ke
+)
     : m_Vertices(vertices),
       m_Indices(indices),
       m_Textures(textures),
       m_VBO(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex)), // require size in bytes
-      m_EBO(m_Indices.data(), m_Indices.size()) // require **count**
+      m_EBO(m_Indices.data(), m_Indices.size()), // require **count**
+      m_Ka(Ka),
+      m_Kd(Kd),
+      m_Ks(Ks),
+      m_Ke(Ke)
 {
     // m_VAO setup still needs the layout, so build it here
     setupMesh();
@@ -41,10 +53,13 @@ void Mesh::Draw(Shader &shader)
         else if (name == "texture_specular")
             number = std::to_string(specularNr++);
 
-        // shader.SetUniform1i("material." + name + number, i);
         shader.SetUniform1i(name + number, i);
         m_Textures[i]->Bind(i);
     }
+    shader.SetUniform3f("mtl_Ka", m_Ka.r, m_Ka.g, m_Ka.b);
+    shader.SetUniform3f("mtl_Kd", m_Kd.r, m_Kd.g, m_Kd.b);
+    shader.SetUniform3f("mtl_Ks", m_Ks.r, m_Ks.g, m_Ks.b);
+    shader.SetUniform3f("mtl_Ke", m_Ke.r, m_Ke.g, m_Ke.b);
 
     // draw mesh
     Renderer renderer;

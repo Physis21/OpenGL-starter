@@ -14,6 +14,7 @@ target_sources(OpenGL-starter
         tests/TestSpecMap.cpp
         tests/TestTypesOfLights.cpp
         tests/TestModelLoad.cpp
+        tests/TestStencilOutline.cpp
     PRIVATE FILE_SET HEADERS FILES
         main.hpp
         tests/Test.hpp
@@ -26,6 +27,7 @@ target_sources(OpenGL-starter
         tests/TestSpecMap.hpp
         tests/TestTypesOfLights.hpp
         tests/TestModelLoad.hpp
+        tests/TestStencilOutline.hpp
 )
 target_link_libraries(OpenGL-starter
     PRIVATE

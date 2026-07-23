@@ -1,5 +1,4 @@
 #include "main.hpp"
-#include "tests/TestTypesOfLights.hpp"
 
 int main(int argc, char**argv){
     if (!glfwInit()) {
@@ -129,6 +128,7 @@ int main(int argc, char**argv){
         testMenu->RegisterTest<test::TestSpecMap>("Specular Map on 2D plane", window);
         testMenu->RegisterTest<test::TestTypesOfLights>("Different types of light", window);
         testMenu->RegisterTest<test::TestModelLoad>("OBJ file loading with Assimp", window);
+        testMenu->RegisterTest<test::TestStencilOutline>("GLTF file loading with Assimp, and stencil outline", window);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {

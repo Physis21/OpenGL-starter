@@ -94,6 +94,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 	// 2. specular maps
 	std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	// 3. Ka, Kd, Ks
+	aiColor3D Ka, Kd, Ks, Ke;
+	material->Get(AI_MATKEY_COLOR_AMBIENT, Ka);
+	material->Get(AI_MATKEY_COLOR_DIFFUSE, Kd);
+	material->Get(AI_MATKEY_COLOR_SPECULAR, Ks);
+	material->Get(AI_MATKEY_COLOR_EMISSIVE, Ke);
+	return Mesh(vertices, indices, textures, Ka, Kd, Ks, Ke);
     }
     return Mesh(vertices, indices, textures);
 }

@@ -10,6 +10,7 @@
 #include "Shader.hpp"
 #include "Renderer.hpp"
 #include "Texture.hpp"
+#include "assimp/types.h"
 #include <memory>
 #include <vector>
 
@@ -18,6 +19,8 @@ class Mesh {
         std::vector<Vertex>         m_Vertices;
         std::vector<unsigned int>   m_Indices;
         std::vector<std::shared_ptr<Texture>>  m_Textures;
+        // There is a single material per mesh
+        aiColor3D m_Ka, m_Kd, m_Ks, m_Ke;
 
         VertexBuffer m_VBO;
         IndexBuffer m_EBO;
@@ -30,7 +33,11 @@ class Mesh {
         Mesh(
                 const std::vector<Vertex>& vertices,
                 const std::vector<unsigned int>& indices,
-                const std::vector<std::shared_ptr<Texture>>& textures
+                const std::vector<std::shared_ptr<Texture>>& textures,
+                const aiColor3D& Ka = {0.0f, 0.0f, 0.0f},
+                const aiColor3D& Kd = {0.0f, 0.0f, 0.0f},
+                const aiColor3D& Ks = {0.0f, 0.0f, 0.0f},
+                const aiColor3D& Ke = {0.0f, 0.0f, 0.0f}
         );
 
         // delete copy constructors as Mesh owns 3 RAII wrappers around raw GL objects.

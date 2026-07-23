@@ -39,6 +39,10 @@ class Model {
 
         void loadModel(const std::string& path);
         void processNode(aiNode *node, const aiScene *scene);
+        /* Process a mesh from assimp, and return a `Mesh` class from it.
+         * @param[in] mesh
+         * @param[in] scene
+         */
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
         std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, const aiTextureType& type, const std::string& typeName);
 

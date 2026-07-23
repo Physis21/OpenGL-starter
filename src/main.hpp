@@ -33,3 +33,4 @@
 #include "tests/TestSpecMap.hpp"
 #include "tests/TestTypesOfLights.hpp"
 #include "tests/TestModelLoad.hpp"
+#include "tests/TestStencilOutline.hpp"
