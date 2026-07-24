@@ -16,6 +16,7 @@
 #include "Shader.hpp"
 #include "Model.hpp"
 
+
 namespace test {
     class TestStencilOutline: public Test {
         public:
@@ -27,10 +28,22 @@ namespace test {
             void OnImGuiRender() override;
 
         private:
+            enum ShaderChoice {
+                RegularShaderChoice = 0,
+                StencilOutlineShaderChoice = 1,
+                NormalOutlineShaderChoice = 2,
+                SobelShaderChoice = 3,
+                Last // Kept only for iterating over enum
+            };
+            ShaderChoice m_ShaderChoice = RegularShaderChoice;
             // pyramid
             std::unique_ptr<Model> m_Model;
             std::unique_ptr<Shader> m_Shader;
+            std::unique_ptr<Shader> m_NormalOutlineShader;
+            std::unique_ptr<Shader> m_SobelShader;
             std::unique_ptr<Shader> m_OutlineShader;
+
+            
 
             std::unique_ptr<Camera> m_Camera;
 
