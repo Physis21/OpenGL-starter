@@ -21,8 +21,8 @@ public:
     VertexBuffer(const VertexBuffer&) = delete;
     VertexBuffer& operator=(const VertexBuffer&) = delete;
 
-    VertexBuffer(VertexBuffer&& other) noexcept
-        : m_RendererID(other.m_RendererID) {
+    VertexBuffer(VertexBuffer&& other) : m_RendererID(other.m_RendererID) 
+        {
             other.m_RendererID = 0; // null-out so its destructor is a no-op
         }
     VertexBuffer& operator=(VertexBuffer&& other) noexcept {

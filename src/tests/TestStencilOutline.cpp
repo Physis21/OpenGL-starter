@@ -84,11 +84,15 @@ namespace test {
 
         GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); // make sure we update the stencil buffer
         GLCall(glStencilMask(0xFF)); // make sure we update the stencil buffer
-        if (m_ShaderChoice != NormalOutlineShaderChoice) {
+        if (m_ShaderChoice == RegularShaderChoice) {
             m_Shader->Bind();
             m_Camera->Matrix(*m_Shader, "u_CamMatrix");
             m_Model->Draw(*m_Shader);
-        } else {
+        } else if (m_ShaderChoice == SobelShaderChoice){
+            m_Shader->Bind();
+            m_Camera->Matrix(*m_Shader, "u_CamMatrix");
+            m_Model->Draw(*m_Shader);
+        } else if (m_ShaderChoice == NormalOutlineShaderChoice){
             glm::vec3 camPos = m_Camera->GetPosition();
             m_NormalOutlineShader->Bind();
             m_Camera->Matrix(*m_NormalOutlineShader, "u_CamMatrix");
