@@ -13,7 +13,6 @@
  */
 
 #include "TestObjLoad.hpp"
-#include "glm/ext/matrix_float4x4.hpp"
 
 namespace test {
 
@@ -171,6 +170,8 @@ namespace test {
         {
             ImGui::Begin("My GUI window!");
 
+            ImGui::TextWrapped("Here I test a custom-made OBJ file loader, using tinyobj. Later on, I will instead use "
+                    "Assimp, which supports much more file types.");
             ImGui::Text("Current light direction: %.2f, %.2f", m_LightDirection[0], m_LightDirection[1]);
 
             ImGui::Text("Object A transformations");

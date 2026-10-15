@@ -39,7 +39,7 @@ ObjLoader::ObjLoader(const std::string& filepath, const std::string& mtl_search_
     const std::vector<tinyobj::material_t>& materials = reader.GetMaterials();
 
     // Assume there is a single material
-    if (!materials.empty()) {
+    if (materials.empty()) {
         throw std::runtime_error("No material found from OBJ file");
     } else {
         m_Material = materials[0];

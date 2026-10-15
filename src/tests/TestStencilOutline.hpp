@@ -38,7 +38,7 @@ namespace test {
             ShaderChoice m_ShaderChoice = RegularShaderChoice;
             // pyramid
             std::unique_ptr<Model> m_Model;
-            std::unique_ptr<Shader> m_Shader;
+            std::unique_ptr<Shader> m_Shader; // Regular shader
             std::unique_ptr<Shader> m_NormalOutlineShader;
             std::unique_ptr<Shader> m_SobelShader;
             std::unique_ptr<Shader> m_OutlineShader;

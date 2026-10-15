@@ -7,16 +7,15 @@ namespace test {
         m_ImGuiIO(ImGui::GetIO())
         // glm::perspective divides X and Y by Z (perspective divide).
     {
-        /* NOTE: In this test, blending is disabled.
-        // GLCall(glEnable(GL_BLEND));
-         * Default: glBlendFunc(src=GL_ONE, dest=GL_ZERO) 
-         * The source gets overriden by zeros in this case,
-         * and the default glBlendEquation(GL_FUNC_ADD) simply adds src+dest 
-         * NOTE: the alpha value also goes through the equation */
-        // GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-        glEnable(GL_DEPTH_TEST); // Enable Z-buffer!
+        GLCall(glEnable(GL_DEPTH_TEST)); // Enable Z-buffer!
         GLCall(glEnable(GL_STENCIL_TEST));
+
+        /* Decides what happends after the test.
+         * in cases :
+         * - sfail & dpfail: we choose to keep the stored ref value
+         * - dppass: we replace the stencil ref value
+         * So if the fragment is actually drawn, write something into the stencil buffer, else leave it alone.
+         */
         GLCall(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
 
 
@@ -67,28 +66,44 @@ namespace test {
         
         m_Camera->UpdateMatrix(45.0f, 0.1f, 100.0f);
 
+        /* 0xFF read mask means all bits are used in ref and current pixel stencil value
+         * Here, we make sure we update the stencil test always passes */
+        GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
+        /* glStencilMask controls which bit in the stencil buffer any write can make
+         * Here, we make sure we update the stencil buffer */
+        GLCall(glStencilMask(0xFF));
+
         if (m_ShaderChoice == StencilOutlineShaderChoice) {
+            // From https://www.youtube.com/watch?v=ngF9LWWxhd0&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M-&index=16
+            // Not a conventional way of outlining, but somewhat works. Pretty complicated, from my point of view.
+            
+            // 1st pass: draw the car normally. Every fragment writes 1 into the stencil buffer,
+            // which marks the car's silhouette.
+            m_Shader->Bind();
+            m_Camera->Matrix(*m_Shader, "u_CamMatrix");
+            m_Model->Draw(*m_Shader);
+
+            // 2nd pass: draw the upscaled car, only where the stencil buffer != 1 (outside the silhouette).
+            GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF)); // Inside the silhouette, this comparison will fail
+            GLCall(glStencilMask(0x00)); // Disable writing to the stencil buffer to keep the original silhouette.
+            GLCall(glDisable(GL_DEPTH_TEST)); // Outline is drawn on top of everything
+
             m_OutlineShader->Bind();
             m_Camera->Matrix(*m_OutlineShader, "u_CamMatrix");
-
-            GLCall(glStencilFunc(GL_NOTEQUAL, 1, 0xFF)); // Pass test when the buffer val != 1 and depth test passes.
-            GLCall(glStencilMask(0xFF)); // Disable writing to stencil mask to keep original silhouette.
-            GLCall(glDisable(GL_DEPTH_TEST));
-            m_OutlineShader->Bind();
             m_OutlineShader->SetUniform1f("u_Outlining", 1.08);
             m_Model->Draw(*m_OutlineShader);
-            GLCall(glStencilMask(0x00));
-            GLCall(glStencilFunc(GL_ALWAYS, 0, 0xFF));
-            GLCall(glEnable(GL_DEPTH_TEST));
-        }
 
-        GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF)); // make sure we update the stencil buffer
-        GLCall(glStencilMask(0xFF)); // make sure we update the stencil buffer
-        if (m_ShaderChoice == RegularShaderChoice) {
+            // Restore state. The stencil mask must be 0xFF again, otherwise
+            // glClear(GL_STENCIL_BUFFER_BIT) won't clear the stencil buffer next frame.
+            GLCall(glStencilMask(0xFF));
+            GLCall(glStencilFunc(GL_ALWAYS, 1, 0xFF));
+            GLCall(glEnable(GL_DEPTH_TEST));
+        } else if (m_ShaderChoice == RegularShaderChoice) {
             m_Shader->Bind();
             m_Camera->Matrix(*m_Shader, "u_CamMatrix");
             m_Model->Draw(*m_Shader);
         } else if (m_ShaderChoice == SobelShaderChoice){
+            // Not implemented yet, but reportedly a more standard way of making outlines.
             m_Shader->Bind();
             m_Camera->Matrix(*m_Shader, "u_CamMatrix");
             m_Model->Draw(*m_Shader);
