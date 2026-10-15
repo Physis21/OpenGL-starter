@@ -1,6 +1,12 @@
 # Starter project for OpenGL projects
 
-[Link to source video](https://www.youtube.com/watch?v=LxEFn-cGdE0&t=252s)
+Multiple OpenGL examples can be selected from the start window, each describing an aspect of OpenGL
+and graphics programming.
+The code for each example can be easely read, making this project useful documentation for starting OpenGL projects.
+
+I first followed [Cherno's openGL youtube series](https://www.youtube.com/watch?v=W3gAzLwfIP0&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2)
+for the basics and the testing framework, then followed [Victor Gordan's OpenGL series](https://www.youtube.com/watch?v=XpBGwZNyUh0&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M-)
+for more in-depth concepts.
 
 In this project:
 
